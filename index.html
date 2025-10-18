@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nahid Hasan - AI Engineer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 20%, rgba(120, 80, 200, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(80, 200, 180, 0.15) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1.5rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            background: rgba(10, 10, 10, 0.8);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #7850c8, #50c8b4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #e0e0e0;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: #7850c8;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #7850c8, #50c8b4);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        section {
+            position: relative;
+            min-height: 100vh;
+            padding: 6rem 10%;
+            z-index: 1;
+        }
+
+        .hero {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .hero h1 {
+            font-size: 5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero .gradient-text {
+            background: linear-gradient(135deg, #7850c8, #50c8b4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            color: #a0a0a0;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            animation: fadeInUp 1s ease 0.2s backwards;
+        }
+
+        .cta-button {
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #fff;
+            background: linear-gradient(135deg, #7850c8, #50c8b4);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            animation: fadeInUp 1s ease 0.4s backwards;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(120, 80, 200, 0.4);
+        }
+
+        .section-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .skill-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .skill-card:hover {
+            transform: translateY(-10px);
+            border-color: #7850c8;
+            box-shadow: 0 10px 40px rgba(120, 80, 200, 0.3);
+        }
+
+        .skill-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .skill-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        .skill-card p {
+            color: #a0a0a0;
+            line-height: 1.6;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .project-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+        }
+
+        .project-card:hover {
+            transform: translateY(-10px);
+            border-color: #50c8b4;
+            box-shadow: 0 10px 40px rgba(80, 200, 180, 0.3);
+        }
+
+        .project-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, rgba(120, 80, 200, 0.3), rgba(80, 200, 180, 0.3));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+        }
+
+        .project-content {
+            padding: 2rem;
+        }
+
+        .project-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        .project-card p {
+            color: #a0a0a0;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .project-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            padding: 0.3rem 0.8rem;
+            background: rgba(120, 80, 200, 0.2);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: #7850c8;
+        }
+
+        .contact-container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .contact-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .contact-link {
+            font-size: 2.5rem;
+            color: #e0e0e0;
+            transition: all 0.3s;
+        }
+
+        .contact-link:hover {
+            color: #7850c8;
+            transform: scale(1.2);
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 3rem;
+            }
+            
+            nav {
+                padding: 1rem 5%;
+            }
+            
+            .nav-links {
+                gap: 1rem;
+            }
+            
+            section {
+                padding: 4rem 5%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"></div>
+
+    <nav>
+        <div class="logo">NH</div>
+        <ul class="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#skills">Skills</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <section id="home" class="hero">
+        <h1>
+            Hi, I'm <span class="gradient-text">Nahid Hasan</span><br>
+            AI Engineer & ML Specialist
+        </h1>
+        <p>Building intelligent systems that transform data into actionable insights. Specialized in deep learning, NLP, and computer vision.</p>
+        <a href="#contact" class="cta-button">Get In Touch</a>
+    </section>
+
+    <section id="skills">
+        <h2 class="section-title">Technical <span class="gradient-text">Expertise</span></h2>
+        <div class="skills-grid">
+            <div class="skill-card">
+                <div class="skill-icon">🤖</div>
+                <h3>Machine Learning</h3>
+                <p>Expert in developing and deploying ML models using TensorFlow, PyTorch, and scikit-learn. Specialized in deep neural networks and reinforcement learning.</p>
+            </div>
+            <div class="skill-card">
+                <div class="skill-icon">💬</div>
+                <h3>Natural Language Processing</h3>
+                <p>Advanced experience with transformer models, BERT, GPT architectures, and LLM fine-tuning for various NLP tasks.</p>
+            </div>
+            <div class="skill-card">
+                <div class="skill-icon">👁️</div>
+                <h3>Computer Vision</h3>
+                <p>Proficient in CNNs, object detection, image segmentation, and real-time video processing using OpenCV and YOLO.</p>
+            </div>
+            <div class="skill-card">
+                <div class="skill-icon">☁️</div>
+                <h3>MLOps & Cloud</h3>
+                <p>Experienced in model deployment, monitoring, and scaling on AWS, GCP, and Azure. Kubernetes, Docker, and CI/CD pipelines.</p>
+            </div>
+            <div class="skill-card">
+                <div class="skill-icon">📊</div>
+                <h3>Data Engineering</h3>
+                <p>Strong foundation in data pipelines, ETL processes, and big data technologies like Spark, Airflow, and SQL databases.</p>
+            </div>
+            <div class="skill-card">
+                <div class="skill-icon">🔬</div>
+                <h3>Research & Innovation</h3>
+                <p>Published researcher with experience in experimental design, A/B testing, and staying current with latest AI developments.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="projects">
+        <h2 class="section-title">Featured <span class="gradient-text">Projects</span></h2>
+        <div class="projects-grid">
+            <div class="project-card">
+                <div class="project-image">🎯</div>
+                <div class="project-content">
+                    <h3>Orani-AI-Assistant</h3>
+                    <p>Orani is an AI-powered virtual receptionist that automates call handling, transcription, and messaging to streamline business communications Integrating Twilio, Whisper, and ElevenLabs, it offers secure, multilingual telephony with CRM support, enhancing efficiency and customer engagement for SMBs.</p>
+                    <div class="project-tags">
+                        <span class="tag">Twilio</span>
+                        <span class="tag">Vapi</span>
+                        <span class="tag">ElevenLabs</span>
+                        <span class="tag">Whisper</span>
+                    </div>
+                </div>
+            </div>
+            <div class="project-card">
+                <div class="project-image">🗣️</div>
+                <div class="project-content">
+                    <h3>Multi-Agent Orchestration with LangGraph</h3>
+                    <p>Developed a modular multi-agent orchestration system using LangGraph, modeling AI agent workflows as directed stateful graphs to enable flexible, scalable, and maintainable agent
+                    collaboration logic.</p>
+                    <div class="project-tags">
+                        <span class="tag">LangGraph</span>
+                        <span class="tag">Agent</span>
+                        <span class="tag">Automation</span>
+                        <span class="tag">LLM</span>
+                        <span class="tag">Python</span>
+                    </div>
+                </div>
+            </div>
+            <div class="project-card">
+                <div class="project-image">🚗</div>
+                <div class="project-content">
+                    <h3>AI-Medical-Solution-app</h3>
+                    <p>AI-Medical-Solution-app is a privacy-focused AI platform that automates clinical documentation using multimodal inputs and advanced transcription with OpenAI
+                    Whisper. Leveraging Google Gemini, it generates structured, multilingual clinical notes while ensuring secure, ephemeral processing. Built with FastAPI and a modular architecture, it delivers scalable, production-grade AI for healthcare workflows.</p>
+                    <div class="project-tags">
+                        <span class="tag">Whisper</span>
+                        <span class="tag">Python</span>
+                        <span class="tag">LLM</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact">
+        <div class="contact-container">
+            <h2 class="section-title">Let's <span class="gradient-text">Connect</span></h2>
+            <p style="font-size: 1.2rem; color: #a0a0a0; margin-bottom: 2rem;">
+                Interested in collaboration or have a project in mind? I'm always open to discussing new opportunities and innovative AI solutions.
+            </p>
+            <div class="contact-links">
+                <a href="nahidhasan.gst.cse@gmail.com" class="contact-link">📧</a>
+                <a href="https://github.com/myself-nahid" target="_blank" class="contact-link">💻</a>
+                <a href="https://www.linkedin.com/in/nahid-hasan-4b2a27363/" target="_blank" class="contact-link">💼</a>
+                <a href="https://www.kaggle.com/nhmishuk" target="_blank" class="contact-link">🐦</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 Nahid Hasan. Crafted with AI & passion.</p>
+    </footer>
+
+    <script>
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+
+        // Add scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeInUp 0.8s ease forwards';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.skill-card, .project-card').forEach(el => {
+            el.style.opacity = '0';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
