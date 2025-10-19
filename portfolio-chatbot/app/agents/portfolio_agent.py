@@ -1,6 +1,6 @@
 from typing import TypedDict, Annotated
 from langgraph.graph import StateGraph, END
-from langchain_openai import ChatOpenAI
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.schema import HumanMessage, SystemMessage
 import operator
 
@@ -13,11 +13,12 @@ class AgentState(TypedDict):
 def create_portfolio_agent(config):
     """Create a LangGraph agent for portfolio chatbot"""
     
-    llm = ChatOpenAI(
+    llm = ChatGoogleGenerativeAI(
         model=config.model_name,
         temperature=config.temperature,
         max_tokens=config.max_tokens,
-        openai_api_key=config.openai_api_key
+        google_api_key=config.GOOGLE_API_KEY,
+        convert_system_message_to_human=True
     )
     
     def process_query(state: AgentState) -> AgentState:
