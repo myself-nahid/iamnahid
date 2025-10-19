@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
     <title>Nahid Hasan - AI Engineer</title>
     <style>
         * {
@@ -915,7 +916,13 @@
             
             const content = document.createElement('div');
             content.className = 'message-content';
-            content.textContent = text;
+            //content.textContent = text;
+            // Render markdown for bot messages
+            if (sender === 'bot') {
+                content.innerHTML = marked.parse(text);
+            } else {
+                content.textContent = text;
+            }
             
             messageDiv.appendChild(avatar);
             messageDiv.appendChild(content);
