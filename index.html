@@ -14,6 +14,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-size: 1rem;
             background: #0a0a0a;
             color: #e0e0e0;
             overflow-x: hidden;
@@ -89,10 +90,38 @@
         .logo {
             font-size: 1.5rem;
             font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-icon {
+            width: 2.8125rem;
+            height: 2.8125rem;
             background: linear-gradient(135deg, #7850c8, #50c8b4);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: white;
+            font-size: 1.3rem;
+            box-shadow: 0 4px 15px rgba(120, 80, 200, 0.3);
+            transition: all 0.3s;
+        }
+
+        .logo-icon:hover {
+            transform: rotate(-5deg) scale(1.05);
+            box-shadow: 0 6px 20px rgba(120, 80, 200, 0.5);
+        }
+
+        .logo-text {
+            font-weight: 600;
+            color: #e0e0e0;
+        }
+
+        body.light-theme .logo-text {
+            color: #1a1a1a;
         }
 
         .nav-links {
@@ -173,6 +202,36 @@
             color: #666;
         }
 
+        .hero-badges {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease 0.3s backwards;
+        }
+
+        .badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(120, 80, 200, 0.1);
+            border: 1px solid rgba(120, 80, 200, 0.3);
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .badge:hover {
+            background: rgba(120, 80, 200, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .badge-icon {
+            font-size: 1.2rem;
+        }
+
         .cta-button {
             padding: 1rem 2.5rem;
             font-size: 1.1rem;
@@ -183,14 +242,64 @@
             border-radius: 50px;
             cursor: pointer;
             transition: all 0.3s;
-            animation: fadeInUp 1s ease 0.4s backwards;
+            animation: fadeInUp 1s ease 0.5s backwards;
             text-decoration: none;
             display: inline-block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .cta-button:hover::before {
+            width: 300px;
+            height: 300px;
         }
 
         .cta-button:hover {
             transform: translateY(-3px);
             box-shadow: 0 10px 30px rgba(120, 80, 200, 0.4);
+        }
+
+        .stats-container {
+            display: flex;
+            gap: 3rem;
+            margin-top: 3rem;
+            animation: fadeInUp 1s ease 0.6s backwards;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #7850c8, #50c8b4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #a0a0a0;
+            font-size: 0.9rem;
+        }
+
+        body.light-theme .stat-label {
+            color: #666;
         }
 
         .section-title {
@@ -252,6 +361,208 @@
         }
 
         body.light-theme .skill-card p {
+            color: #666;
+        }
+
+        /* Education Section Styles */
+        .education-timeline {
+            max-width: 900px;
+            margin: 3rem auto;
+            position: relative;
+        }
+
+        .education-timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, #7850c8, #50c8b4);
+            transform: translateX(-50%);
+        }
+
+        .education-item {
+            display: flex;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .education-item:nth-child(odd) {
+            flex-direction: row;
+        }
+
+        .education-item:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        .education-content {
+            width: 45%;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        body.light-theme .education-content {
+            background: rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .education-content:hover {
+            transform: translateY(-5px);
+            border-color: #7850c8;
+            box-shadow: 0 10px 30px rgba(120, 80, 200, 0.3);
+        }
+
+        .education-date {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #7850c8, #50c8b4);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            z-index: 2;
+        }
+
+        .education-icon {
+            position: absolute;
+            left: 50%;
+            top: 2rem;
+            transform: translateX(-50%);
+            width: 3.125rem;
+            height: 3.125rem;
+            background: linear-gradient(135deg, #7850c8, #50c8b4);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            z-index: 2;
+            border: 0.25rem solid #0a0a0a;
+            transition: all 0.3s;
+        }
+
+        body.light-theme .education-icon {
+            border-color: #ffffff;
+        }
+
+        .education-item:hover .education-icon {
+            transform: translateX(-50%) scale(1.2) rotate(360deg);
+        }
+
+        .education-content h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+
+        body.light-theme .education-content h3 {
+            color: #1a1a1a;
+        }
+
+        .education-content h4 {
+            font-size: 1.1rem;
+            color: #7850c8;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .education-content p {
+            color: #a0a0a0;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        body.light-theme .education-content p {
+            color: #666;
+        }
+
+        .education-achievements {
+            margin-top: 1rem;
+        }
+
+        .achievement {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            color: #a0a0a0;
+            font-size: 0.9rem;
+        }
+
+        body.light-theme .achievement {
+            color: #666;
+        }
+
+        .achievement::before {
+            content: '✓';
+            color: #50c8b4;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        /* Certifications Section */
+        .certifications-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .cert-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        body.light-theme .cert-card {
+            background: rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .cert-card:hover {
+            transform: translateY(-5px);
+            border-color: #50c8b4;
+            box-shadow: 0 10px 30px rgba(80, 200, 180, 0.3);
+        }
+
+        .cert-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .cert-card h3 {
+            color: #fff;
+            margin-bottom: 0.5rem;
+        }
+
+        body.light-theme .cert-card h3 {
+            color: #1a1a1a;
+        }
+
+        .cert-issuer {
+            color: #7850c8;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .cert-date {
+            color: #a0a0a0;
+            font-size: 0.85rem;
+        }
+
+        body.light-theme .cert-date {
             color: #666;
         }
 
@@ -375,14 +686,14 @@
         /* Chatbot Styles */
         .chatbot-container {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
+            bottom: 1.25rem;
+            right: 1.25rem;
             z-index: 1001;
         }
 
         .chatbot-toggle {
-            width: 60px;
-            height: 60px;
+            width: 3.75rem;
+            height: 3.75rem;
             border-radius: 50%;
             background: linear-gradient(135deg, #7850c8, #50c8b4);
             border: none;
@@ -402,10 +713,10 @@
 
         .chatbot-window {
             position: fixed;
-            bottom: 90px;
-            right: 20px;
-            width: 380px;
-            height: 550px;
+            bottom: 5.625rem;
+            right: 1.25rem;
+            width: 23.75rem;
+            height: 34.375rem;
             background: rgba(10, 10, 10, 0.95);
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 20px;
@@ -474,7 +785,7 @@
         }
 
         .chatbot-messages::-webkit-scrollbar {
-            width: 6px;
+            width: 0.375rem;
         }
 
         .chatbot-messages::-webkit-scrollbar-track {
@@ -483,7 +794,7 @@
 
         .chatbot-messages::-webkit-scrollbar-thumb {
             background: rgba(120, 80, 200, 0.5);
-            border-radius: 3px;
+            border-radius: 0.1875rem;
         }
 
         .message {
@@ -513,8 +824,8 @@
         }
 
         .message-avatar {
-            width: 32px;
-            height: 32px;
+            width: 2rem;
+            height: 2rem;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -617,8 +928,8 @@
         }
 
         .typing-indicator span {
-            width: 8px;
-            height: 8px;
+            width: 0.5rem;
+            height: 0.5rem;
             border-radius: 50%;
             background: #7850c8;
             animation: typing 1.4s infinite;
@@ -663,10 +974,46 @@
             
             .nav-links {
                 gap: 1rem;
+                font-size: 0.9rem;
             }
             
             section {
                 padding: 4rem 5%;
+            }
+
+            .stats-container {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .education-timeline::before {
+                left: 1.875rem;
+            }
+
+            .education-item {
+                flex-direction: column !important;
+                padding-left: 3.75rem;
+            }
+
+            .education-content {
+                width: 100%;
+            }
+
+            .education-icon {
+                left: 1.875rem;
+            }
+
+            .education-date {
+                position: static;
+                transform: none;
+                display: inline-block;
+                margin-bottom: 1rem;
+            }
+
+            .chatbot-window {
+                width: calc(100vw - 2.5rem);
+                right: 1.25rem;
+                left: 1.25rem;
             }
         }
     </style>
@@ -675,10 +1022,14 @@
     <div class="bg-gradient"></div>
 
     <nav>
-        <div class="logo">NH</div>
+        <div class="logo">
+            <div class="logo-icon">NH</div>
+            <span class="logo-text">Nahid Hasan</span>
+        </div>
         <ul class="nav-links">
             <li><a href="#home">Home</a></li>
             <li><a href="#skills">Skills</a></li>
+            <li><a href="#education">Education</a></li>
             <li><a href="#projects">Projects</a></li>
             <li><a href="#contact">Contact</a></li>
         </ul>
@@ -693,7 +1044,38 @@
             AI Engineer & ML Specialist
         </h1>
         <p>Building intelligent systems that transform data into actionable insights. Specialized in deep learning, NLP, and computer vision.</p>
+        
+        <div class="hero-badges">
+            <div class="badge">
+                <span class="badge-icon">🎓</span>
+                <span>B.Sc in Computer Science</span>
+            </div>
+            <div class="badge">
+                <span class="badge-icon">🏆</span>
+                <span>AI Research Published</span>
+            </div>
+            <div class="badge">
+                <span class="badge-icon">💼</span>
+                <span>1+ Years Experience</span>
+            </div>
+        </div>
+        
         <a href="#contact" class="cta-button">Get In Touch</a>
+        
+        <div class="stats-container">
+            <div class="stat-item">
+                <div class="stat-number">20+</div>
+                <div class="stat-label">Projects Completed</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">2+</div>
+                <div class="stat-label">ML Models Deployed</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">98%</div>
+                <div class="stat-label">Client Satisfaction</div>
+            </div>
+        </div>
     </section>
 
     <section id="skills">
@@ -732,6 +1114,89 @@
         </div>
     </section>
 
+    <section id="education">
+        <h2 class="section-title">Education & <span class="gradient-text">Certifications</span></h2>
+        
+        <div class="education-timeline">
+            <div class="education-item">
+                <div class="education-date">2018 - 2024</div>
+                <div class="education-icon">🎓</div>
+                <div class="education-content">
+                    <h3>Bachelor of Science in Computer Engineering</h3>
+                    <h4>Gopalgonj Science and Technology University</h4>
+                    <p>Specialized in Artificial Intelligence and Machine Learning with focus on deep learning architectures and neural networks.</p>
+                    <div class="education-achievements">
+                        <div class="achievement">Successfully completed a thesis-based AI project</div>
+                        <div class="achievement">Led multiple AI research lab projects</div>
+                        <div class="achievement">Executed end-to-end data analysis using Python</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="education-item">
+                <div class="education-date">2015 - 2017</div>
+                <div class="education-icon">📚</div>
+                <div class="education-content">
+                    <h3>High School Certificate</h3>
+                    <h4>Noakhali Govt. College</h4>
+                    <p>Strong foundation in Science, Mathmatics and Biology</p>
+                    <div class="education-achievements">
+                        <div class="achievement">Member of Science Club</div>
+                        <div class="achievement">Member of Science Club</div>
+                        <div class="achievement">Member of Science Club</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="education-item">
+                <div class="education-date">2010 - 2014</div>
+                <div class="education-icon">📚</div>
+                <div class="education-content">
+                    <h3>Secondary School Certificate</h3>
+                    <h4>Govt. Technical High School</h4>
+                    <p>Strong foundation in Science, Mathmatics, Biology and ICT</p>
+                    <div class="education-achievements">
+                        <div class="achievement">Member of Science Club</div>
+                        <div class="achievement">Member of Science Club</div>
+                        <div class="achievement">Member of Science Club</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h3 class="section-title" style="font-size: 2rem; margin-top: 4rem;">Professional <span class="gradient-text">Certifications</span></h3>
+        
+        <div class="certifications-grid">
+            <div class="cert-card">
+                <div class="cert-icon">🏅</div>
+                <h3>TensorFlow Developer Certificate</h3>
+                <p class="cert-issuer">Google</p>
+                <p class="cert-date">2024</p>
+            </div>
+            
+            <div class="cert-card">
+                <div class="cert-icon">☁️</div>
+                <h3>AWS Machine Learning Specialty</h3>
+                <p class="cert-issuer">Amazon Web Services</p>
+                <p class="cert-date">2023</p>
+            </div>
+            
+            <div class="cert-card">
+                <div class="cert-icon">🎯</div>
+                <h3>Deep Learning Specialization</h3>
+                <p class="cert-issuer">DeepLearning.AI</p>
+                <p class="cert-date">2023</p>
+            </div>
+            
+            <div class="cert-card">
+                <div class="cert-icon">🔐</div>
+                <h3>Azure AI Engineer Associate</h3>
+                <p class="cert-issuer">Microsoft</p>
+                <p class="cert-date">2024</p>
+            </div>
+        </div>
+    </section>
+
     <section id="projects">
         <h2 class="section-title">Featured <span class="gradient-text">Projects</span></h2>
         <div class="projects-grid">
@@ -739,7 +1204,7 @@
                 <div class="project-image">🎯</div>
                 <div class="project-content">
                     <h3>Orani-AI-Assistant</h3>
-                    <p>Orani is an AI-powered virtual receptionist that automates call handling, transcription, and messaging to streamline business communications Integrating Twilio, Whisper, and ElevenLabs, it offers secure, multilingual telephony with CRM support, enhancing efficiency and customer engagement for SMBs.</p>
+                    <p>Orani is an AI-powered virtual receptionist that automates call handling, transcription, and messaging to streamline business communications. Integrating Twilio, Whisper, and ElevenLabs, it offers secure, multilingual telephony with CRM support, enhancing efficiency and customer engagement for SMBs.</p>
                     <div class="project-tags">
                         <span class="tag">Twilio</span>
                         <span class="tag">Vapi</span>
@@ -752,8 +1217,7 @@
                 <div class="project-image">🗣️</div>
                 <div class="project-content">
                     <h3>Multi-Agent Orchestration with LangGraph</h3>
-                    <p>Developed a modular multi-agent orchestration system using LangGraph, modeling AI agent workflows as directed stateful graphs to enable flexible, scalable, and maintainable agent
-                    collaboration logic.</p>
+                    <p>Developed a modular multi-agent orchestration system using LangGraph, modeling AI agent workflows as directed stateful graphs to enable flexible, scalable, and maintainable agent collaboration logic.</p>
                     <div class="project-tags">
                         <span class="tag">LangGraph</span>
                         <span class="tag">Agent</span>
@@ -767,12 +1231,25 @@
                 <div class="project-image">🚗</div>
                 <div class="project-content">
                     <h3>AI-Medical-Solution-app</h3>
-                    <p>AI-Medical-Solution-app is a privacy-focused AI platform that automates clinical documentation using multimodal inputs and advanced transcription with OpenAI
-                    Whisper. Leveraging Google Gemini, it generates structured, multilingual clinical notes while ensuring secure, ephemeral processing. Built with FastAPI and a modular architecture, it delivers scalable, production-grade AI for healthcare workflows.</p>
+                    <p>AI-Medical-Solution-app is a privacy-focused AI platform that automates clinical documentation using multimodal inputs and advanced transcription with OpenAI Whisper. Leveraging Google Gemini, it generates structured, multilingual clinical notes while ensuring secure, ephemeral processing. Built with FastAPI and a modular architecture, it delivers scalable, production-grade AI for healthcare workflows.</p>
                     <div class="project-tags">
                         <span class="tag">Whisper</span>
                         <span class="tag">Python</span>
                         <span class="tag">LLM</span>
+                    </div>
+                </div>
+            </div>
+            <div class="project-card">
+                <div class="project-image">🚗</div>
+                <div class="project-content">
+                    <h3>SMART AGRICULTURE FARMING</h3>
+                    <p>Smart Agriculture Farming is a web application that helps farmers make data-driven
+                    decisions using machine learning and deep learning. It has three main modules: Crop Recommendation suggests ideal crops based on environmental and soil data; Fertilizer Recommendation provides tailored fertilizer options for soil and crop needs; and Crop Disease Prediction detects diseases from images to enable timely intervention, enhancing yield and productivity.</p>
+                    <div class="project-tags">
+                        <span class="tag">Python</span>
+                        <span class="tag">Flask</span>
+                        <span class="tag">CNN</span>
+                        <span class="tag">Logistic Regression</span>
                     </div>
                 </div>
             </div>
@@ -786,10 +1263,10 @@
                 Interested in collaboration or have a project in mind? I'm always open to discussing new opportunities and innovative AI solutions.
             </p>
             <div class="contact-links">
-                <a href="nahidhasan.gst.cse@gmail.com" class="contact-link">📧</a>
+                <a href="mailto:nahidhasan.gst.cse@gmail.com" class="contact-link">📧</a>
                 <a href="https://github.com/myself-nahid" target="_blank" class="contact-link">💻</a>
                 <a href="https://www.linkedin.com/in/nahid-hasan-4b2a27363/" target="_blank" class="contact-link">💼</a>
-                <a href="https://www.kaggle.com/nhmishuk" target="_blank" class="contact-link">🐦</a>
+                <a href="https://www.kaggle.com/nhmishuk" target="_blank" class="contact-link">📊</a>
             </div>
         </div>
     </section>
@@ -895,7 +1372,7 @@
             } catch (error) {
                 console.error('Error:', error);
                 removeTypingIndicator(typingId);
-                addMessage("I'm having trouble connecting right now. Please make sure the backend server is running on localhost:8000.", 'bot');
+                addMessage("I'm having trouble connecting right now. Please make sure the backend server is running.", 'bot');
             } finally {
                 // Re-enable input
                 sendBtn.disabled = false;
@@ -916,7 +1393,7 @@
             
             const content = document.createElement('div');
             content.className = 'message-content';
-            //content.textContent = text;
+            
             // Render markdown for bot messages
             if (sender === 'bot') {
                 content.innerHTML = marked.parse(text);
@@ -982,7 +1459,9 @@
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
-                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
             });
         });
 
@@ -1000,7 +1479,7 @@
             });
         }, observerOptions);
 
-        document.querySelectorAll('.skill-card, .project-card').forEach(el => {
+        document.querySelectorAll('.skill-card, .project-card, .education-item, .cert-card').forEach(el => {
             el.style.opacity = '0';
             observer.observe(el);
         });
