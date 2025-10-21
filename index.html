@@ -96,8 +96,8 @@
         }
 
         .logo-icon {
-            width: 2.8125rem;
-            height: 2.8125rem;
+            width: 2.5rem;
+            height: 2.5rem;
             background: linear-gradient(135deg, #7850c8, #50c8b4);
             border-radius: 0.75rem;
             display: flex;
@@ -105,7 +105,7 @@
             justify-content: center;
             font-weight: 800;
             color: white;
-            font-size: 1.3rem;
+            font-size: 1.1rem;
             box-shadow: 0 4px 15px rgba(120, 80, 200, 0.3);
             transition: all 0.3s;
         }
@@ -159,6 +159,21 @@
 
         .nav-links a:hover::after {
             width: 100%;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #e0e0e0;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        body.light-theme .mobile-menu-toggle {
+            color: #1a1a1a;
         }
 
         section {
@@ -277,10 +292,13 @@
             gap: 3rem;
             margin-top: 3rem;
             animation: fadeInUp 1s ease 0.6s backwards;
+            flex-wrap: wrap;
         }
 
         .stat-item {
             text-align: center;
+            flex: 1;
+            min-width: 150px;
         }
 
         .stat-number {
@@ -364,7 +382,6 @@
             color: #666;
         }
 
-        /* Education Section Styles */
         .education-timeline {
             max-width: 900px;
             margin: 3rem auto;
@@ -509,10 +526,9 @@
             font-size: 1.1rem;
         }
 
-        /* Certifications Section */
         .certifications-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 2rem;
             margin-top: 3rem;
         }
@@ -568,7 +584,7 @@
 
         .projects-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
             margin-top: 3rem;
         }
@@ -655,6 +671,7 @@
             justify-content: center;
             gap: 2rem;
             margin-top: 3rem;
+            flex-wrap: wrap;
         }
 
         .contact-link {
@@ -683,7 +700,6 @@
             border-top: 1px solid rgba(0, 0, 0, 0.1);
         }
 
-        /* Chatbot Styles */
         .chatbot-container {
             position: fixed;
             bottom: 1.25rem;
@@ -963,27 +979,141 @@
             }
         }
 
-        @media (max-width: 768px) {
+        /* Mobile Responsive Styles */
+        @media (max-width: 1024px) {
             .hero h1 {
-                font-size: 3rem;
+                font-size: 3.5rem;
             }
-            
+
+            .section-title {
+                font-size: 2.5rem;
+            }
+
+            section {
+                padding: 5rem 7%;
+            }
+        }
+
+        @media (max-width: 768px) {
             nav {
                 padding: 1rem 5%;
             }
-            
-            .nav-links {
-                gap: 1rem;
-                font-size: 0.9rem;
+
+            .logo {
+                font-size: 1.2rem;
             }
-            
+
+            .logo-icon {
+                width: 2rem;
+                height: 2rem;
+                font-size: 1rem;
+            }
+
+            .logo-text {
+                display: none;
+            }
+
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                left: -100%;
+                width: 100%;
+                height: calc(100vh - 70px);
+                background: rgba(10, 10, 10, 0.98);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                align-items: center;
+                justify-content: flex-start;
+                padding: 3rem 0;
+                gap: 2rem;
+                transition: left 0.3s ease;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            body.light-theme .nav-links {
+                background: rgba(255, 255, 255, 0.98);
+                border-top: 1px solid rgba(0, 0, 0, 0.1);
+            }
+
+            .nav-links.active {
+                left: 0;
+            }
+
+            .nav-links a {
+                font-size: 1.5rem;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .theme-toggle {
+                padding: 0.4rem 0.8rem;
+                font-size: 1rem;
+            }
+
             section {
                 padding: 4rem 5%;
+                min-height: auto;
+            }
+
+            .hero {
+                padding-top: 2rem;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+                line-height: 1.2;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .hero-badges {
+                gap: 0.8rem;
+            }
+
+            .badge {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.85rem;
+            }
+
+            .badge-icon {
+                font-size: 1rem;
+            }
+
+            .cta-button {
+                padding: 0.9rem 2rem;
+                font-size: 1rem;
             }
 
             .stats-container {
                 flex-direction: column;
+                gap: 2rem;
+                margin-top: 2rem;
+            }
+
+            .stat-item {
+                min-width: auto;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+                margin-bottom: 2rem;
+            }
+
+            .skills-grid {
+                grid-template-columns: 1fr;
                 gap: 1.5rem;
+            }
+
+            .skill-card {
+                padding: 1.5rem;
             }
 
             .education-timeline::before {
@@ -992,15 +1122,21 @@
 
             .education-item {
                 flex-direction: column !important;
-                padding-left: 3.75rem;
+                padding-left: 4rem;
+                margin-bottom: 2rem;
             }
 
             .education-content {
                 width: 100%;
+                padding: 1.5rem;
             }
 
             .education-icon {
                 left: 1.875rem;
+                width: 2.5rem;
+                height: 2.5rem;
+                font-size: 1.2rem;
+                border-width: 0.2rem;
             }
 
             .education-date {
@@ -1008,12 +1144,132 @@
                 transform: none;
                 display: inline-block;
                 margin-bottom: 1rem;
+                font-size: 0.85rem;
+                padding: 0.4rem 1rem;
+            }
+
+            .education-content h3 {
+                font-size: 1.2rem;
+            }
+
+            .education-content h4 {
+                font-size: 1rem;
+            }
+
+            .certifications-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .cert-card {
+                padding: 1.5rem;
+            }
+
+            .projects-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .project-content {
+                padding: 1.5rem;
+            }
+
+            .project-card h3 {
+                font-size: 1.3rem;
+            }
+
+            .contact-links {
+                gap: 1.5rem;
+            }
+
+            .contact-link {
+                font-size: 2rem;
             }
 
             .chatbot-window {
-                width: calc(100vw - 2.5rem);
-                right: 1.25rem;
-                left: 1.25rem;
+                width: calc(100vw - 2rem);
+                height: calc(100vh - 8rem);
+                right: 1rem;
+                left: 1rem;
+                bottom: 5rem;
+            }
+
+            .chatbot-toggle {
+                width: 3.5rem;
+                height: 3.5rem;
+                font-size: 1.6rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+
+            .stat-number {
+                font-size: 1.8rem;
+            }
+
+            .stat-label {
+                font-size: 0.85rem;
+            }
+
+            .skill-icon {
+                font-size: 2.5rem;
+            }
+
+            .skill-card h3 {
+                font-size: 1.3rem;
+            }
+
+            .project-image {
+                height: 150px;
+                font-size: 3rem;
+            }
+
+            .cert-icon {
+                font-size: 2.5rem;
+            }
+
+            .contact-container p {
+                font-size: 1rem;
+            }
+
+            .chatbot-header h3 {
+                font-size: 1rem;
+            }
+
+            .chatbot-messages {
+                padding: 1rem;
+            }
+
+            .message-content {
+                max-width: 80%;
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            .badge {
+                font-size: 0.75rem;
+                padding: 0.3rem 0.6rem;
+            }
+
+            .cta-button {
+                padding: 0.8rem 1.5rem;
+                font-size: 0.95rem;
             }
         }
     </style>
@@ -1026,12 +1282,13 @@
             <div class="logo-icon">NH</div>
             <span class="logo-text">Nahid Hasan</span>
         </div>
-        <ul class="nav-links">
-            <li><a href="#home">Home</a></li>
-            <li><a href="#skills">Skills</a></li>
-            <li><a href="#education">Education</a></li>
-            <li><a href="#projects">Projects</a></li>
-            <li><a href="#contact">Contact</a></li>
+        <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">☰</button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="#home" onclick="closeMobileMenu()">Home</a></li>
+            <li><a href="#skills" onclick="closeMobileMenu()">Skills</a></li>
+            <li><a href="#education" onclick="closeMobileMenu()">Education</a></li>
+            <li><a href="#projects" onclick="closeMobileMenu()">Projects</a></li>
+            <li><a href="#contact" onclick="closeMobileMenu()">Contact</a></li>
         </ul>
         <button class="theme-toggle" onclick="toggleTheme()">
             <span id="theme-icon">☀️</span>
@@ -1189,7 +1446,7 @@
             </div>
             
             <div class="cert-card">
-                <div class="cert-icon">🔐</div>
+                <div class="cert-icon">📘</div>
                 <h3>Azure AI Engineer Associate</h3>
                 <p class="cert-issuer">Microsoft</p>
                 <p class="cert-date">2024</p>
@@ -1228,7 +1485,7 @@
                 </div>
             </div>
             <div class="project-card">
-                <div class="project-image">🚗</div>
+                <div class="project-image">🏥</div>
                 <div class="project-content">
                     <h3>AI-Medical-Solution-app</h3>
                     <p>AI-Medical-Solution-app is a privacy-focused AI platform that automates clinical documentation using multimodal inputs and advanced transcription with OpenAI Whisper. Leveraging Google Gemini, it generates structured, multilingual clinical notes while ensuring secure, ephemeral processing. Built with FastAPI and a modular architecture, it delivers scalable, production-grade AI for healthcare workflows.</p>
@@ -1240,7 +1497,7 @@
                 </div>
             </div>
             <div class="project-card">
-                <div class="project-image">🚗</div>
+                <div class="project-image">🌾</div>
                 <div class="project-content">
                     <h3>SMART AGRICULTURE FARMING</h3>
                     <p>Smart Agriculture Farming is a web application that helps farmers make data-driven
@@ -1275,7 +1532,6 @@
         <p>&copy; 2025 Nahid Hasan. Crafted with AI & passion.</p>
     </footer>
 
-    <!-- Chatbot -->
     <div class="chatbot-container">
         <button class="chatbot-toggle" onclick="toggleChatbot()">💬</button>
         
@@ -1310,10 +1566,18 @@
     </div>
 
     <script>
-        // API Configuration
         const API_BASE_URL = 'https://portfolio-chatbot-backend-uj84.onrender.com';
 
-        // Chatbot functionality
+        function toggleMobileMenu() {
+            const navLinks = document.getElementById('nav-links');
+            navLinks.classList.toggle('active');
+        }
+
+        function closeMobileMenu() {
+            const navLinks = document.getElementById('nav-links');
+            navLinks.classList.remove('active');
+        }
+
         function toggleChatbot() {
             const chatbotWindow = document.getElementById('chatbot-window');
             chatbotWindow.classList.toggle('active');
@@ -1335,20 +1599,16 @@
             
             if (!message) return;
             
-            // Add user message
             addMessage(message, 'user');
             input.value = '';
             
-            // Disable input while processing
             const sendBtn = document.getElementById('send-btn');
             sendBtn.disabled = true;
             input.disabled = true;
             
-            // Show typing indicator
             const typingId = addTypingIndicator();
             
             try {
-                // Call API
                 const response = await fetch(`${API_BASE_URL}/api/chat`, {
                     method: 'POST',
                     headers: {
@@ -1363,10 +1623,7 @@
                 
                 const data = await response.json();
                 
-                // Remove typing indicator
                 removeTypingIndicator(typingId);
-                
-                // Add bot response
                 addMessage(data.response, 'bot');
                 
             } catch (error) {
@@ -1374,7 +1631,6 @@
                 removeTypingIndicator(typingId);
                 addMessage("I'm having trouble connecting right now. Please make sure the backend server is running.", 'bot');
             } finally {
-                // Re-enable input
                 sendBtn.disabled = false;
                 input.disabled = false;
                 input.focus();
@@ -1394,7 +1650,6 @@
             const content = document.createElement('div');
             content.className = 'message-content';
             
-            // Render markdown for bot messages
             if (sender === 'bot') {
                 content.innerHTML = marked.parse(text);
             } else {
@@ -1405,7 +1660,6 @@
             messageDiv.appendChild(content);
             messagesContainer.appendChild(messageDiv);
             
-            // Scroll to bottom
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
@@ -1440,7 +1694,6 @@
             }
         }
 
-        // Theme toggle functionality
         function toggleTheme() {
             const body = document.body;
             const themeIcon = document.getElementById('theme-icon');
@@ -1454,7 +1707,6 @@
             }
         }
 
-        // Smooth scrolling
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -1465,7 +1717,6 @@
             });
         });
 
-        // Add scroll animations
         const observerOptions = {
             threshold: 0.1,
             rootMargin: '0px 0px -100px 0px'
@@ -1482,6 +1733,12 @@
         document.querySelectorAll('.skill-card, .project-card, .education-item, .cert-card').forEach(el => {
             el.style.opacity = '0';
             observer.observe(el);
+        });
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                document.getElementById('nav-links').classList.remove('active');
+            }
         });
     </script>
 </body>
