@@ -700,6 +700,38 @@
             border-top: 1px solid rgba(0, 0, 0, 0.1);
         }
 
+        .simple-animation {
+            display: inline-block;
+            background: linear-gradient(135deg, #7850c8, #50c8b4, #7850c8);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            animation: gradientShift 3s ease infinite, pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
         .chatbot-container {
             position: fixed;
             bottom: 1.25rem;
@@ -1297,7 +1329,7 @@
 
     <section id="home" class="hero">
         <h1>
-            Hi, I'm <span class="gradient-text">Nahid Hasan</span><br>
+            Hi, I'm <span class="simple-animation">Nahid Hasan</span><br>
             AI Engineer & ML Specialist
         </h1>
         <p>Building intelligent systems that transform data into actionable insights. Specialized in deep learning, NLP, and computer vision.</p>
