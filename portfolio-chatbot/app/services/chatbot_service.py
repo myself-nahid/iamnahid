@@ -1,43 +1,282 @@
-from app.agents.portfolio_agent import create_portfolio_agent, AgentState
-from app.services.knowledge_base import get_knowledge_base
-from app.config import get_settings
-import uuid
-import re
-from typing import Optional, Dict, Any, Tuple
+"""
+Enhanced Chatbot Service - Fixed MemoryError Issue
+Integrates:
+- RAG-based agent
+- Improved validation
+- Advanced query handling
+- Response quality monitoring
+- Fallback strategies
+- FIXED: Proper conversation history management
+"""
+
+from typing import Optional, Dict, Any
 from datetime import datetime
 import logging
+import uuid
+
+# Import enhanced components
+from app.agents.portfolio_agent import (
+    create_enhanced_portfolio_agent,
+    EnhancedAgentState
+)
+from app.services.improved_input_validation import ImprovedInputValidator
+from app.services.knowledge_base import get_knowledge_base
+from app.config import get_settings
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-class ChatbotService:
+class EnhancedChatbotService:
     """
-    Enhanced chatbot service with conversation management,
-    intent detection, input validation, and response formatting
+    Production-ready chatbot service with advanced capabilities
     """
     
     def __init__(self):
-        """Initialize chatbot service with configuration and agent"""
+        """Initialize enhanced chatbot service"""
         self.config = get_settings()
         self.knowledge_base = get_knowledge_base()
-        self.agent = create_portfolio_agent(self.config)
+        self.agent = create_enhanced_portfolio_agent(self.config)
+        self.validator = ImprovedInputValidator()
+        
+        # Conversation management
         self.conversations = {}
         self.conversation_metadata = {}
         
-        logger.info("ChatbotService initialized successfully")
+        # Quality monitoring
+        self.quality_metrics = {
+            "total_queries": 0,
+            "successful_responses": 0,
+            "validation_failures": 0,
+            "low_confidence_responses": 0,
+            "average_confidence": 0.0
+        }
+        
+        logger.info("EnhancedChatbotService initialized successfully")
     
-    def _strip_markdown(self, text: str) -> str:
+    def _create_conversation_metadata(self, conversation_id: str) -> None:
+        """Initialize conversation metadata"""
+        self.conversation_metadata[conversation_id] = {
+            "created_at": datetime.utcnow().isoformat(),
+            "message_count": 0,
+            "query_types": [],
+            "confidence_scores": [],
+            "last_activity": datetime.utcnow().isoformat(),
+            "validation_failures": 0,
+            "user_satisfaction_indicators": {
+                "follow_up_questions": 0,
+                "query_refinements": 0,
+                "positive_feedback_signals": 0
+            }
+        }
+    
+    def _update_conversation_metadata(
+        self,
+        conversation_id: str,
+        query_type: str,
+        confidence: float,
+        is_valid: bool = True
+    ) -> None:
+        """Update conversation tracking"""
+        if conversation_id not in self.conversation_metadata:
+            self._create_conversation_metadata(conversation_id)
+        
+        metadata = self.conversation_metadata[conversation_id]
+        metadata["message_count"] += 1
+        metadata["query_types"].append(query_type)
+        metadata["confidence_scores"].append(confidence)
+        metadata["last_activity"] = datetime.utcnow().isoformat()
+        
+        if not is_valid:
+            metadata["validation_failures"] += 1
+    
+    def _update_quality_metrics(self, confidence: float, success: bool) -> None:
+        """Update service-wide quality metrics"""
+        self.quality_metrics["total_queries"] += 1
+        
+        if success:
+            self.quality_metrics["successful_responses"] += 1
+        
+        if confidence < 0.7:
+            self.quality_metrics["low_confidence_responses"] += 1
+        
+        # Update rolling average confidence
+        total = self.quality_metrics["total_queries"]
+        old_avg = self.quality_metrics["average_confidence"]
+        self.quality_metrics["average_confidence"] = (
+            (old_avg * (total - 1) + confidence) / total
+        )
+    
+    def _handle_ambiguous_query(self, message: str, validation_metadata: Dict) -> str:
+        """Provide helpful response for ambiguous queries"""
+        suggestions = [
+            "Try asking about specific projects (e.g., 'Tell me about your Orani AI Assistant project')",
+            "Ask about technical skills (e.g., 'What NLP technologies do you use?')",
+            "Inquire about experience (e.g., 'How many years of ML experience do you have?')",
+            "Learn about specific domains (e.g., 'What computer vision projects have you built?')"
+        ]
+        
+        response = "I'd love to help! Here are some things you can ask me about:\n\n"
+        response += "\n".join(f"• {suggestion}" for suggestion in suggestions[:3])
+        
+        return response
+    
+    def _get_fallback_response(self, error_type: str, context: Dict) -> str:
+        """Generate appropriate fallback response"""
+        fallbacks = {
+            "validation_error": "I didn't quite understand that. Could you rephrase your question about my AI/ML work, skills, or projects?",
+            "processing_error": "I encountered an issue processing your request. Please try rephrasing or ask about my experience, skills, or projects.",
+            "low_confidence": "I'm not entirely certain about that. Let me share what I do know, or feel free to ask about specific aspects of my AI/ML expertise.",
+            "out_of_scope": "That's outside my knowledge base about Nahid's portfolio. I can tell you about his AI/ML skills, projects, experience, and education. What would you like to know?"
+        }
+        
+        return fallbacks.get(error_type, fallbacks["processing_error"])
+    
+    async def get_response(
+        self,
+        message: str,
+        conversation_id: Optional[str] = None,
+        enable_markdown_stripping: bool = True,
+        enable_advanced_features: bool = True
+    ) -> Dict[str, Any]:
         """
-        Remove markdown formatting from text for clean display
+        Get enhanced chatbot response with full features
         
         Args:
-            text: Text with potential markdown formatting
+            message: User input
+            conversation_id: Optional conversation ID
+            enable_markdown_stripping: Strip markdown formatting
+            enable_advanced_features: Enable RAG and validation
             
         Returns:
-            Clean text without markdown symbols
+            Response dictionary with metadata
         """
+        try:
+            # Sanitize input
+            sanitized_message = self.validator.sanitize_input(message)
+            
+            # Generate conversation ID
+            if not conversation_id:
+                conversation_id = str(uuid.uuid4())
+                self._create_conversation_metadata(conversation_id)
+            
+            # Validate message
+            is_valid, reason, validation_metadata = self.validator.is_valid_message(
+                sanitized_message
+            )
+            
+            if not is_valid:
+                self._update_conversation_metadata(
+                    conversation_id, "invalid", 0.0, is_valid=False
+                )
+                self.quality_metrics["validation_failures"] += 1
+                
+                feedback = self.validator.get_validation_feedback(
+                    is_valid, reason, validation_metadata
+                )
+                
+                return {
+                    "response": feedback,
+                    "conversation_id": conversation_id,
+                    "error": "invalid_input",
+                    "reason": reason,
+                    "metadata": validation_metadata,
+                    "timestamp": datetime.utcnow().isoformat()
+                }
+            
+            # CRITICAL FIX: Get conversation history but DON'T pass it in initial state
+            # Let the agent manage its own state accumulation
+            conversation_history = self.conversations.get(conversation_id, [])
+            
+            # Limit history to prevent memory issues (keep last 10 messages)
+            if len(conversation_history) > 10:
+                conversation_history = conversation_history[-10:]
+                self.conversations[conversation_id] = conversation_history
+            
+            # Create enhanced agent state
+            # IMPORTANT: Pass empty list for messages - agent will manage accumulation
+            initial_state = EnhancedAgentState(
+                messages=[],  # FIXED: Empty list instead of conversation_history
+                user_query=sanitized_message,
+                response="",
+                knowledge_base=self.knowledge_base,
+                retrieved_context=[],
+                query_type="general",
+                confidence_score=0.0,
+                needs_validation=True,
+                tools_used=[],
+                reasoning_steps=[]
+            )
+            
+            # Invoke enhanced agent
+            logger.info(f"Processing query with enhanced agent: {conversation_id}")
+            result = self.agent.invoke(initial_state)
+            
+            # Extract response and metadata
+            response_text = result.get("response", "")
+            confidence = result.get("confidence_score", 0.8)
+            query_type = result.get("query_type", "general")
+            reasoning_steps = result.get("reasoning_steps", [])
+            
+            # Handle low confidence responses
+            if confidence < 0.5:
+                logger.warning(f"Low confidence response ({confidence:.2f}): {sanitized_message[:50]}")
+                response_text = self._get_fallback_response("low_confidence", result)
+                response_text += f"\n\nOriginal attempt: {result.get('response', '')}"
+            
+            # Strip markdown if enabled
+            if enable_markdown_stripping:
+                response_text = self._strip_markdown(response_text)
+            
+            # CRITICAL FIX: Manually update conversation history
+            # Extract the new messages from result and append to our history
+            result_messages = result.get("messages", [])
+            if result_messages:
+                # Append only the new message pair from this turn
+                conversation_history.extend(result_messages[-2:])  # Last 2 messages (user + assistant)
+                self.conversations[conversation_id] = conversation_history
+            
+            # Update metadata and metrics
+            self._update_conversation_metadata(
+                conversation_id, query_type, confidence, is_valid=True
+            )
+            self._update_quality_metrics(confidence, success=True)
+            
+            # Prepare response
+            response_data = {
+                "response": response_text,
+                "conversation_id": conversation_id,
+                "confidence": confidence,
+                "query_type": query_type,
+                "message_count": self.conversation_metadata[conversation_id]["message_count"],
+                "reasoning_steps": reasoning_steps if enable_advanced_features else [],
+                "timestamp": datetime.utcnow().isoformat()
+            }
+            
+            logger.info(f"Response generated successfully (confidence: {confidence:.2f})")
+            
+            return response_data
+            
+        except Exception as e:
+            logger.error(f"Error in get_response: {str(e)}", exc_info=True)
+            
+            self._update_quality_metrics(0.0, success=False)
+            
+            fallback = self._get_fallback_response("processing_error", {})
+            
+            return {
+                "response": fallback,
+                "conversation_id": conversation_id or str(uuid.uuid4()),
+                "error": str(e),
+                "confidence": 0.0,
+                "timestamp": datetime.utcnow().isoformat()
+            }
+    
+    def _strip_markdown(self, text: str) -> str:
+        """Remove markdown formatting"""
+        import re
+        
         # Remove bold
         text = re.sub(r'\*\*([^\*]+)\*\*', r'\1', text)
         text = re.sub(r'__([^_]+)__', r'\1', text)
@@ -66,526 +305,138 @@ class ChatbotService:
         
         return text
     
-    def _is_valid_message(self, message: str) -> Tuple[bool, str]:
-        """
-        Validate if message is meaningful and not gibberish
+    def get_quality_report(self) -> Dict[str, Any]:
+        """Generate quality metrics report"""
+        total = self.quality_metrics["total_queries"]
         
-        Args:
-            message: User input message
-            
-        Returns:
-            Tuple of (is_valid, reason)
-        """
-        # Check minimum length
-        if len(message) < 2:
-            return False, "too_short"
-        
-        # Remove punctuation and spaces for analysis
-        clean_text = ''.join(char for char in message if char.isalpha())
-        
-        if not clean_text:
-            return False, "no_letters"
-        
-        # Check for vowels (basic language check)
-        vowels = set('aeiouAEIOU')
-        has_vowels = any(char in vowels for char in message)
-        
-        if not has_vowels and len(clean_text) > 3:
-            return False, "no_vowels"
-        
-        # Count vowels and consonants
-        vowel_count = sum(1 for char in clean_text if char.lower() in vowels)
-        total_letters = len(clean_text)
-        
-        if total_letters > 0:
-            vowel_ratio = vowel_count / total_letters
-            
-            # Natural language typically has 35-45% vowels
-            # Allow some flexibility for acronyms and short words
-            if total_letters > 5 and (vowel_ratio < 0.15 or vowel_ratio > 0.7):
-                return False, "abnormal_vowel_ratio"
-        
-        # Check for excessive consecutive consonants (keyboard smashing)
-        max_consecutive_consonants = 0
-        current_consecutive = 0
-        
-        for char in message.lower():
-            if char.isalpha() and char not in vowels:
-                current_consecutive += 1
-                max_consecutive_consonants = max(max_consecutive_consonants, current_consecutive)
-            else:
-                current_consecutive = 0
-        
-        # Most natural words don't have more than 5-6 consecutive consonants
-        if max_consecutive_consonants > 7:
-            return False, "excessive_consonants"
-        
-        # Check for repeated patterns (like "aaaaaa" or "kjkjkjkj")
-        words = message.split()
-        gibberish_words = 0
-        
-        for word in words:
-            # Check if word is just repeated characters
-            if len(word) > 3 and len(set(word.lower())) <= 2:
-                gibberish_words += 1
-            
-            # Check for alternating character patterns
-            if len(word) > 6:
-                is_pattern = True
-                pattern_length = 2
-                for i in range(0, len(word) - pattern_length, pattern_length):
-                    if word[i:i+pattern_length].lower() != word[0:pattern_length].lower():
-                        is_pattern = False
-                        break
-                if is_pattern:
-                    gibberish_words += 1
-        
-        # If more than 50% of words are gibberish
-        if words and gibberish_words / len(words) > 0.5:
-            return False, "repetitive_patterns"
-        
-        # Check for common question words or greetings (indicates valid input)
-        common_words = {
-            'what', 'who', 'where', 'when', 'why', 'how', 'tell', 'explain',
-            'describe', 'show', 'can', 'could', 'would', 'should', 'hello',
-            'hi', 'hey', 'greetings', 'help', 'about', 'your', 'you', 'skills',
-            'experience', 'project', 'work', 'know', 'do', 'does', 'is', 'are'
-        }
-        
-        message_lower = message.lower()
-        has_common_word = any(word in message_lower for word in common_words)
-        
-        # If message is very short and has no common words, might be gibberish
-        if len(words) <= 2 and not has_common_word and total_letters > 8:
-            return False, "no_recognizable_words"
-        
-        return True, "valid"
-    
-    def _detect_intent(self, message: str) -> str:
-        """
-        Detect user intent from message to customize response style
-        
-        Args:
-            message: User's input message
-            
-        Returns:
-            Intent category string
-        """
-        message_lower = message.lower()
-        
-        # Technical questions
-        technical_keywords = [
-            'how do', 'how does', 'architecture', 'implement', 'algorithm', 'model',
-            'framework', 'technical', 'code', 'deploy', 'optimize', 'build',
-            'pipeline', 'api', 'database', 'performance', 'tensorflow', 'pytorch',
-            'neural', 'training', 'mlops', 'kubernetes', 'docker'
-        ]
-        if any(keyword in message_lower for keyword in technical_keywords):
-            return "technical_question"
-        
-        # Project inquiries
-        project_keywords = [
-            'project', 'built', 'created', 'developed', 'work on', 'worked',
-            'portfolio', 'example', 'showcase', 'case study', 'recommendation',
-            'chatbot', 'detection', 'vehicle'
-        ]
-        if any(keyword in message_lower for keyword in project_keywords):
-            return "project_inquiry"
-        
-        # Collaboration/business
-        business_keywords = [
-            'hire', 'hiring', 'available', 'collaborate', 'work together',
-            'consulting', 'freelance', 'rate', 'cost', 'price', 'salary',
-            'contract', 'opportunity', 'job', 'position', 'email', 'contact'
-        ]
-        if any(keyword in message_lower for keyword in business_keywords):
-            return "collaboration"
-        
-        # Skills and experience
-        skills_keywords = [
-            'skill', 'expertise', 'experience', 'know', 'familiar', 'proficient',
-            'good at', 'specializ', 'capability', 'capable', 'technologies',
-            'tools', 'programming', 'language'
-        ]
-        if any(keyword in message_lower for keyword in skills_keywords):
-            return "skills_inquiry"
-        
-        # Quick facts (short questions)
-        if len(message.split()) <= 5 or (message.endswith('?') and len(message) < 50):
-            return "quick_question"
-        
-        return "general"
-    
-    def _sanitize_input(self, message: str) -> str:
-        """
-        Sanitize user input to prevent injection attacks
-        
-        Args:
-            message: Raw user input
-            
-        Returns:
-            Sanitized message
-        """
-        # Remove potential script tags
-        message = re.sub(r'<script[^>]*>.*?</script>', '', message, flags=re.IGNORECASE | re.DOTALL)
-        
-        # Remove HTML tags
-        message = re.sub(r'<[^>]+>', '', message)
-        
-        # Remove null bytes
-        message = message.replace('\x00', '')
-        
-        # Limit length
-        max_length = 500
-        if len(message) > max_length:
-            message = message[:max_length]
-        
-        # Remove excessive whitespace
-        message = ' '.join(message.split())
-        
-        return message.strip()
-    
-    def _create_conversation_metadata(self, conversation_id: str) -> None:
-        """
-        Create metadata for tracking conversation
-        
-        Args:
-            conversation_id: Unique conversation identifier
-        """
-        self.conversation_metadata[conversation_id] = {
-            "created_at": datetime.utcnow().isoformat(),
-            "message_count": 0,
-            "intents": [],
-            "last_activity": datetime.utcnow().isoformat(),
-            "invalid_attempts": 0
-        }
-    
-    def _update_conversation_metadata(
-        self, 
-        conversation_id: str, 
-        intent: str,
-        is_valid: bool = True
-    ) -> None:
-        """
-        Update conversation metadata after each message
-        
-        Args:
-            conversation_id: Unique conversation identifier
-            intent: Detected intent of current message
-            is_valid: Whether the message was valid
-        """
-        if conversation_id in self.conversation_metadata:
-            metadata = self.conversation_metadata[conversation_id]
-            metadata["message_count"] += 1
-            metadata["intents"].append(intent)
-            metadata["last_activity"] = datetime.utcnow().isoformat()
-            
-            if not is_valid:
-                metadata["invalid_attempts"] = metadata.get("invalid_attempts", 0) + 1
-    
-    def _get_prompt_type(self, intent: str) -> str:
-        """
-        Map intent to prompt type
-        
-        Args:
-            intent: Detected user intent
-            
-        Returns:
-            Prompt type string
-        """
-        intent_to_prompt = {
-            "technical_question": "technical",
-            "collaboration": "sales",
-            "quick_question": "concise",
-            "general": "default",
-            "project_inquiry": "default",
-            "skills_inquiry": "default"
-        }
-        return intent_to_prompt.get(intent, "default")
-    
-    async def get_response(
-        self, 
-        message: str, 
-        conversation_id: Optional[str] = None,
-        enable_markdown_stripping: bool = True,
-        detect_intent: bool = True
-    ) -> Dict[str, Any]:
-        """
-        Get chatbot response for user message with enhanced features
-        
-        Args:
-            message: User's input message
-            conversation_id: Optional existing conversation ID
-            enable_markdown_stripping: Whether to remove markdown from response
-            detect_intent: Whether to detect intent and adapt response
-            
-        Returns:
-            Dictionary containing response, conversation_id, and metadata
-        """
-        try:
-            # Sanitize input
-            sanitized_message = self._sanitize_input(message)
-            
-            if not sanitized_message:
-                return {
-                    "response": "I didn't receive a valid message. Could you please try again?",
-                    "conversation_id": conversation_id or str(uuid.uuid4()),
-                    "error": "empty_message"
-                }
-            
-            # Generate or use existing conversation ID
-            if not conversation_id:
-                conversation_id = str(uuid.uuid4())
-                self._create_conversation_metadata(conversation_id)
-            
-            # Validate message quality
-            is_valid, validation_reason = self._is_valid_message(sanitized_message)
-            
-            if not is_valid:
-                logger.warning(f"Invalid message detected: {validation_reason} - {sanitized_message}")
-                
-                # Update metadata for invalid attempt
-                self._update_conversation_metadata(conversation_id, "invalid", is_valid=False)
-                
-                # Provide helpful response for invalid input
-                invalid_responses = {
-                    "too_short": "Could you please provide a bit more detail in your question?",
-                    "no_letters": "I need a text-based question. How can I help you learn about my AI/ML expertise?",
-                    "no_vowels": "I'm having trouble understanding your message. Could you try asking about my experience, skills, or projects?",
-                    "abnormal_vowel_ratio": "That doesn't seem like a valid question. Feel free to ask me about my AI engineering work, technical skills, or projects!",
-                    "excessive_consonants": "I didn't quite understand that. Could you rephrase your question about my AI/ML experience, skills, or projects?",
-                    "repetitive_patterns": "That looks like a typo or random characters. How can I help you with information about my work?",
-                    "no_recognizable_words": "I couldn't process that input. Could you ask me about my skills, projects, or experience?"
-                }
-                
-                default_response = "I didn't understand that. Could you ask me about my skills, projects, or AI/ML experience?"
-                
-                return {
-                    "response": invalid_responses.get(validation_reason, default_response),
-                    "conversation_id": conversation_id,
-                    "error": "invalid_input",
-                    "reason": validation_reason,
-                    "timestamp": datetime.utcnow().isoformat()
-                }
-            
-            # Detect intent if enabled
-            intent = "general"
-            if detect_intent:
-                intent = self._detect_intent(sanitized_message)
-                logger.info(f"Detected intent: {intent} for message: {sanitized_message[:50]}...")
-            
-            # Get conversation history
-            conversation_history = self.conversations.get(conversation_id, [])
-            
-            # Create initial state for agent
-            initial_state = AgentState(
-                messages=conversation_history,
-                user_query=sanitized_message,
-                response="",
-                knowledge_base=self.knowledge_base
-            )
-            
-            # Invoke agent to get response
-            logger.info(f"Invoking agent for conversation: {conversation_id}")
-            result = self.agent.invoke(initial_state)
-            
-            # Get raw response
-            raw_response = result.get("response", "I'm sorry, I couldn't generate a response.")
-            
-            # Strip markdown if enabled
-            if enable_markdown_stripping:
-                clean_response = self._strip_markdown(raw_response)
-            else:
-                clean_response = raw_response
-            
-            # Update conversation history
-            self.conversations[conversation_id] = result["messages"]
-            
-            # Update metadata
-            self._update_conversation_metadata(conversation_id, intent, is_valid=True)
-            
-            # Prepare response
-            response_data = {
-                "response": clean_response,
-                "conversation_id": conversation_id,
-                "intent": intent,
-                "message_count": self.conversation_metadata[conversation_id]["message_count"],
-                "timestamp": datetime.utcnow().isoformat()
-            }
-            
-            logger.info(f"Response generated successfully for conversation: {conversation_id}")
-            
-            return response_data
-            
-        except Exception as e:
-            logger.error(f"Error in get_response: {str(e)}", exc_info=True)
-            
+        if total == 0:
             return {
-                "response": "I apologize, but I encountered an error processing your request. Please try again or rephrase your question.",
-                "conversation_id": conversation_id or str(uuid.uuid4()),
-                "error": str(e),
-                "timestamp": datetime.utcnow().isoformat()
+                "status": "no_data",
+                "message": "No queries processed yet"
             }
+        
+        success_rate = (
+            self.quality_metrics["successful_responses"] / total * 100
+        )
+        
+        validation_failure_rate = (
+            self.quality_metrics["validation_failures"] / total * 100
+        )
+        
+        low_confidence_rate = (
+            self.quality_metrics["low_confidence_responses"] / total * 100
+        )
+        
+        return {
+            "total_queries": total,
+            "success_rate": f"{success_rate:.2f}%",
+            "average_confidence": f"{self.quality_metrics['average_confidence']:.2f}",
+            "validation_failure_rate": f"{validation_failure_rate:.2f}%",
+            "low_confidence_rate": f"{low_confidence_rate:.2f}%",
+            "timestamp": datetime.utcnow().isoformat()
+        }
+    
+    def get_conversation_insights(self, conversation_id: str) -> Optional[Dict]:
+        """Get detailed insights for a conversation"""
+        if conversation_id not in self.conversation_metadata:
+            return None
+        
+        metadata = self.conversation_metadata[conversation_id]
+        
+        # Calculate average confidence
+        confidence_scores = metadata.get("confidence_scores", [])
+        avg_confidence = (
+            sum(confidence_scores) / len(confidence_scores)
+            if confidence_scores else 0.0
+        )
+        
+        return {
+            "conversation_id": conversation_id,
+            "message_count": metadata["message_count"],
+            "query_types_distribution": self._get_distribution(
+                metadata["query_types"]
+            ),
+            "average_confidence": f"{avg_confidence:.2f}",
+            "validation_failures": metadata["validation_failures"],
+            "duration_minutes": self._calculate_duration(metadata),
+            "engagement_level": self._assess_engagement(metadata),
+            "timestamp": datetime.utcnow().isoformat()
+        }
+    
+    def _get_distribution(self, items: list) -> Dict[str, int]:
+        """Calculate distribution of items"""
+        distribution = {}
+        for item in items:
+            distribution[item] = distribution.get(item, 0) + 1
+        return distribution
+    
+    def _calculate_duration(self, metadata: Dict) -> float:
+        """Calculate conversation duration in minutes"""
+        try:
+            created = datetime.fromisoformat(metadata["created_at"])
+            last_activity = datetime.fromisoformat(metadata["last_activity"])
+            duration = (last_activity - created).total_seconds() / 60
+            return round(duration, 2)
+        except:
+            return 0.0
+    
+    def _assess_engagement(self, metadata: Dict) -> str:
+        """Assess user engagement level"""
+        msg_count = metadata["message_count"]
+        duration = self._calculate_duration(metadata)
+        
+        if msg_count == 0:
+            return "no_engagement"
+        elif msg_count >= 5 and duration > 2:
+            return "high"
+        elif msg_count >= 3:
+            return "medium"
+        else:
+            return "low"
     
     def clear_conversation(self, conversation_id: str) -> bool:
-        """
-        Clear conversation history and metadata
-        
-        Args:
-            conversation_id: Unique conversation identifier
-            
-        Returns:
-            Boolean indicating success
-        """
+        """Clear conversation data"""
         try:
             if conversation_id in self.conversations:
                 del self.conversations[conversation_id]
-            
             if conversation_id in self.conversation_metadata:
                 del self.conversation_metadata[conversation_id]
             
             logger.info(f"Cleared conversation: {conversation_id}")
             return True
-            
         except Exception as e:
-            logger.error(f"Error clearing conversation {conversation_id}: {str(e)}")
+            logger.error(f"Error clearing conversation: {str(e)}")
             return False
     
-    def get_conversation_metadata(self, conversation_id: str) -> Optional[Dict[str, Any]]:
-        """
-        Get metadata for a specific conversation
-        
-        Args:
-            conversation_id: Unique conversation identifier
-            
-        Returns:
-            Conversation metadata or None
-        """
-        return self.conversation_metadata.get(conversation_id)
-    
-    def get_active_conversations_count(self) -> int:
-        """
-        Get count of active conversations
-        
-        Returns:
-            Number of active conversations
-        """
-        return len(self.conversations)
-    
     def cleanup_old_conversations(self, max_age_hours: int = 24) -> int:
-        """
-        Clean up conversations older than specified hours
-        
-        Args:
-            max_age_hours: Maximum age in hours before cleanup
-            
-        Returns:
-            Number of conversations cleaned up
-        """
+        """Cleanup old conversations"""
         try:
             current_time = datetime.utcnow()
-            conversations_to_remove = []
+            to_remove = []
             
             for conv_id, metadata in self.conversation_metadata.items():
                 last_activity = datetime.fromisoformat(metadata["last_activity"])
                 age_hours = (current_time - last_activity).total_seconds() / 3600
                 
                 if age_hours > max_age_hours:
-                    conversations_to_remove.append(conv_id)
+                    to_remove.append(conv_id)
             
-            # Remove old conversations
-            for conv_id in conversations_to_remove:
+            for conv_id in to_remove:
                 self.clear_conversation(conv_id)
             
-            logger.info(f"Cleaned up {len(conversations_to_remove)} old conversations")
-            return len(conversations_to_remove)
-            
+            logger.info(f"Cleaned up {len(to_remove)} conversations")
+            return len(to_remove)
         except Exception as e:
-            logger.error(f"Error in cleanup_old_conversations: {str(e)}")
+            logger.error(f"Error in cleanup: {str(e)}")
             return 0
-    
-    def get_conversation_history(
-        self, 
-        conversation_id: str, 
-        max_messages: int = 50
-    ) -> list:
-        """
-        Get conversation history for a specific conversation
-        
-        Args:
-            conversation_id: Unique conversation identifier
-            max_messages: Maximum number of messages to return
-            
-        Returns:
-            List of messages
-        """
-        history = self.conversations.get(conversation_id, [])
-        return history[-max_messages:] if history else []
-    
-    def export_conversation(self, conversation_id: str) -> Optional[Dict[str, Any]]:
-        """
-        Export complete conversation data for analytics or debugging
-        
-        Args:
-            conversation_id: Unique conversation identifier
-            
-        Returns:
-            Complete conversation data or None
-        """
-        if conversation_id not in self.conversations:
-            return None
-        
-        return {
-            "conversation_id": conversation_id,
-            "messages": self.conversations[conversation_id],
-            "metadata": self.conversation_metadata.get(conversation_id, {}),
-            "exported_at": datetime.utcnow().isoformat()
-        }
-    
-    def get_statistics(self) -> Dict[str, Any]:
-        """
-        Get service statistics for monitoring
-        
-        Returns:
-            Dictionary with service statistics
-        """
-        total_conversations = len(self.conversations)
-        total_messages = sum(
-            len(messages) for messages in self.conversations.values()
-        )
-        
-        # Intent distribution
-        intent_counts = {}
-        total_invalid = 0
-        
-        for metadata in self.conversation_metadata.values():
-            for intent in metadata.get("intents", []):
-                intent_counts[intent] = intent_counts.get(intent, 0) + 1
-            total_invalid += metadata.get("invalid_attempts", 0)
-        
-        return {
-            "total_conversations": total_conversations,
-            "total_messages": total_messages,
-            "total_invalid_attempts": total_invalid,
-            "average_messages_per_conversation": (
-                total_messages / total_conversations if total_conversations > 0 else 0
-            ),
-            "intent_distribution": intent_counts,
-            "timestamp": datetime.utcnow().isoformat()
-        }
 
 
-# Singleton instance for application-wide use
-_chatbot_service_instance = None
+# Singleton instance
+_enhanced_service_instance = None
 
-def get_chatbot_service() -> ChatbotService:
-    """
-    Get or create singleton chatbot service instance
-    
-    Returns:
-        ChatbotService instance
-    """
-    global _chatbot_service_instance
-    if _chatbot_service_instance is None:
-        _chatbot_service_instance = ChatbotService()
-    return _chatbot_service_instance
+def get_enhanced_chatbot_service() -> EnhancedChatbotService:
+    """Get singleton instance of enhanced service"""
+    global _enhanced_service_instance
+    if _enhanced_service_instance is None:
+        _enhanced_service_instance = EnhancedChatbotService()
+    return _enhanced_service_instance
