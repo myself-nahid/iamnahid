@@ -10,39 +10,40 @@ PORTFOLIO_KNOWLEDGE = {
         "specializations": [
             "Deep Learning",
             "Natural Language Processing",
-            "Computer Vision"
+            "Computer Vision",
+            "MLOps"
         ]
     },
     
     "skills": {
         "machine_learning": {
             "description": "Expert in developing and deploying ML models using TensorFlow, PyTorch, and scikit-learn",
-            "technologies": ["TensorFlow", "PyTorch", "scikit-learn"],
-            "specialties": ["Deep Neural Networks", "Reinforcement Learning"]
+            "technologies": ["TensorFlow", "PyTorch", "scikit-learn", "Keras"],
+            "specialties": ["Deep Neural Networks", "Reinforcement Learning", "Supervised & Unsupervised Learning"]
         },
         "nlp": {
-            "description": "Advanced experience with transformer models and LLM fine-tuning",
-            "technologies": ["BERT", "GPT", "Transformers", "Whisper", "Gemini"],
-            "specialties": ["LLM Fine-tuning", "Text Classification", "Named Entity Recognition", "Transcription"]
+            "description": "Advanced experience with transformer models and LLM fine-tuning for complex language tasks",
+            "technologies": ["BERT", "GPT", "Transformers", "Whisper", "Gemini", "Hugging Face"],
+            "specialties": ["LLM Fine-tuning", "Text Classification", "Named Entity Recognition", "Transcription", "RAG Systems"]
         },
         "computer_vision": {
-            "description": "Proficient in CNNs, object detection, and image segmentation",
-            "technologies": ["OpenCV", "YOLO", "CNNs"],
+            "description": "Proficient in CNNs, object detection, and image segmentation for real-world applications",
+            "technologies": ["OpenCV", "YOLO", "CNNs", "ResNet"],
             "specialties": ["Object Detection", "Image Segmentation", "Real-time Video Processing"]
         },
         "mlops": {
             "description": "Experienced in model deployment, monitoring, and scaling on AWS, GCP, and Azure",
-            "technologies": ["AWS", "GCP", "Azure", "Kubernetes", "Docker"],
-            "specialties": ["CI/CD Pipelines", "Model Monitoring", "Cloud Infrastructure"]
+            "technologies": ["AWS", "GCP", "Azure", "Kubernetes", "Docker", "Terraform"],
+            "specialties": ["CI/CD Pipelines", "Model Monitoring", "Cloud Infrastructure", "Scalable Deployment"]
         },
         "data_engineering": {
-            "description": "Strong foundation in data pipelines and ETL processes",
-            "technologies": ["Spark", "Airflow", "SQL", "Python"],
-            "specialties": ["ETL Processes", "Big Data", "Data Warehousing"]
+            "description": "Strong foundation in building data pipelines and ETL processes for ML systems",
+            "technologies": ["Spark", "Airflow", "SQL", "Python", "Pandas"],
+            "specialties": ["ETL Processes", "Big Data", "Data Warehousing", "Feature Engineering"]
         },
         "research": {
-            "description": "Published researcher with experience in experimental design and A/B testing",
-            "specialties": ["Experimental Design", "A/B Testing", "Research Innovation"]
+            "description": "Published researcher with experience in experimental design, A/B testing, and AI innovation",
+            "specialties": ["Experimental Design", "A/B Testing", "Research Innovation", "Paper Publication"]
         }
     },
     
@@ -50,45 +51,45 @@ PORTFOLIO_KNOWLEDGE = {
         "orani_ai_assistant": {
             "name": "Orani-AI-Assistant",
             "description": "An AI-powered virtual receptionist that automates call handling, transcription, and messaging to streamline business communications. Integrates Twilio, Whisper, and ElevenLabs to offer secure, multilingual telephony with CRM support.",
-            "impact": "Enhances efficiency and customer engagement for SMBs",
-            "technologies": ["Twilio", "Vapi", "ElevenLabs", "Whisper", "FastAPI"],
-            "features": ["Call automation", "Transcription", "Messaging", "CRM integration", "Multilingual support"]
+            "impact": "Enhances efficiency and customer engagement for Small and Medium-sized Businesses (SMBs)",
+            "technologies": ["Twilio", "Vapi", "ElevenLabs", "Whisper", "FastAPI", "Python"],
+            "features": ["Call automation", "Real-time transcription", "Natural text-to-speech", "CRM integration", "Multilingual support"]
         },
         "multi_agent_orchestration": {
             "name": "Multi-Agent Orchestration with LangGraph",
             "description": "A modular multi-agent orchestration system using LangGraph, modeling AI agent workflows as directed stateful graphs to enable flexible, scalable, and maintainable agent collaboration logic.",
-            "technologies": ["LangGraph", "Python", "FastAPI", "LLM"],
-            "features": ["Agent workflow modeling", "Stateful graph processing", "Scalable architecture"]
+            "technologies": ["LangGraph", "LangChain", "Python", "FastAPI", "LLM"],
+            "features": ["Agent workflow modeling", "Stateful graph processing", "Conditional logic", "Scalable architecture"]
         },
         "ai_medical_solution": {
             "name": "AI-Medical-Solution-app",
             "description": "A privacy-focused AI platform that automates clinical documentation using multimodal inputs and advanced transcription. Leverages Google Gemini for generating structured, multilingual clinical notes with secure, ephemeral processing.",
-            "technologies": ["Whisper", "Google Gemini", "FastAPI", "Python"],
-            "features": ["Clinical documentation automation", "Multimodal input processing", "Secure processing", "Multilingual support", "Modular architecture"]
+            "technologies": ["Whisper", "Google Gemini", "FastAPI", "Python", "Pydantic"],
+            "features": ["Clinical documentation automation", "Multimodal input processing", "Secure & private processing", "Multilingual support", "Modular architecture"]
         },
         "smart_agriculture": {
             "name": "SMART AGRICULTURE FARMING",
             "description": "A web application that helps farmers make data-driven decisions using machine learning and deep learning. Includes three main modules: Crop Recommendation, Fertilizer Recommendation, and Crop Disease Prediction.",
-            "technologies": ["Python", "Flask", "CNN", "Logistic Regression"],
+            "technologies": ["Python", "Flask", "CNN", "Logistic Regression", "scikit-learn"],
             "features": [
                 "Crop Recommendation based on environmental and soil data",
                 "Fertilizer Recommendation for soil and crop needs",
-                "Crop Disease Prediction using image analysis"
+                "Crop Disease Prediction using CNN-based image analysis"
             ]
         }
     },
     
     "experience": {
         "years": "1+ years",
-        "industries": ["AI/ML", "Software Development"],
+        "industries": ["AI/ML", "Software Development", "Business Automation"],
         "projects_completed": "20+",
         "ml_models_deployed": "2+",
         "client_satisfaction": "98%",
         "achievements": [
-            "Completed multiple AI research lab projects",
-            "Thesis-based AI project completion",
-            "End-to-end data analysis expertise",
-            "Research publishing experience"
+            "Completed multiple AI research lab projects with tangible outcomes",
+            "Successfully delivered a thesis-based AI project from conception to completion",
+            "Expertise in end-to-end data analysis and machine learning workflows",
+            "Experience publishing research in the field of AI"
         ]
     },
     
@@ -102,22 +103,22 @@ PORTFOLIO_KNOWLEDGE = {
             "achievements": [
                 "Successfully completed a thesis-based AI project",
                 "Led multiple AI research lab projects",
-                "Executed end-to-end data analysis using Python"
+                "Executed end-to-end data analysis using Python and modern data science libraries"
             ]
         },
         "high_school": {
             "qualification": "High School Certificate",
             "institution": "Noakhali Govt. College",
             "period": "2015 - 2017",
-            "subjects": ["Science", "Mathematics", "Biology"],
-            "achievements": ["Member of Science Club"]
+            "subjects": ["Science", "Mathematics", "Biology", "Physics", "Chemistry"],
+            "achievements": ["Active member of the Science Club, participating in regional competitions"]
         },
         "secondary": {
             "qualification": "Secondary School Certificate",
             "institution": "Govt. Technical High School",
             "period": "2010 - 2014",
             "subjects": ["Science", "Mathematics", "Biology", "ICT"],
-            "achievements": ["Member of Science Club"]
+            "achievements": ["Participated in national-level programming contests"]
         }
     },
     
@@ -134,7 +135,7 @@ PORTFOLIO_KNOWLEDGE = {
         },
         "deep_learning": {
             "name": "Deep Learning Specialization",
-            "issuer": "DeepLearning.AI",
+            "issuer": "DeepLearning.AI (Coursera)",
             "year": 2023
         },
         "azure": {

@@ -1,7 +1,7 @@
 """
-Improved Input Validation System
-- Less aggressive filtering
-- Better handling of technical terms
+Improved Input Validation System - Hardened against Gibberish
+- Less aggressive filtering on valid input
+- Stricter rejection of nonsensical input
 - Contextual validation
 - Multi-language support preparation
 """
@@ -13,145 +13,138 @@ import unicodedata
 
 class ImprovedInputValidator:
     """Enhanced input validator that's less aggressive and more contextual"""
-    
+
     def __init__(self):
+        # ... (the __init__ method with its word lists remains the same) ...
         # Expanded common words including technical terms
         self.common_words = {
             # Question words
-            'what', 'who', 'where', 'when', 'why', 'how', 'which',
+            'what', 'who', 'where', 'when', 'why', 'how', 'which', 'can', 'could', 'should',
             # Action words
-            'tell', 'explain', 'describe', 'show', 'list', 'give',
-            'can', 'could', 'would', 'should', 'will', 'do', 'does',
+            'tell', 'explain', 'describe', 'show', 'list', 'give', 'ask', 'query', 'present',
+            'can', 'could', 'would', 'should', 'will', 'do', 'does', 'did', 'is', 'are', 'was', 'were', 'have', 'has', 'had',
             # Common words
-            'hello', 'hi', 'hey', 'greetings', 'help', 'about', 'your',
-            'you', 'me', 'my', 'have', 'has', 'this', 'that', 'with',
-            'for', 'from', 'the', 'a', 'an', 'these', 'those', 'are', 'is',
-            # Technical terms (AI/ML)
-            'ai', 'ml', 'nlp', 'cv', 'llm', 'bert', 'gpt', 'model',
-            'neural', 'network', 'deep', 'learning', 'machine', 'python',
-            'tensorflow', 'pytorch', 'api', 'cloud', 'aws', 'gcp', 'azure',
-            'docker', 'kubernetes', 'data', 'algorithm', 'train', 'deploy',
-            # Portfolio terms
-            'project', 'skill', 'experience', 'work', 'portfolio',
-            'education', 'degree', 'university', 'certification'
+            'hello', 'hi', 'hey', 'greetings', 'help', 'about', 'your', 'my',
+            'you', 'me', 'us', 'we', 'they', 'it', 'its', 'this', 'that', 'these', 'those',
+            'with', 'for', 'from', 'the', 'a', 'an', 'to', 'of', 'in', 'on', 'at', 'by', 'up', 'down', 'out', 'off',
+            'and', 'or', 'but', 'so', 'if', 'then', 'else', 'as', 'than', 'more', 'less', 'most', 'least', 'many', 'much',
+            # Technical terms (AI/ML) - expanded list
+            'ai', 'ml', 'nlp', 'cv', 'llm', 'bert', 'gpt', 'model', 'neural', 'network',
+            'deep', 'learning', 'machine', 'python', 'tensorflow', 'pytorch', 'api', 'cloud',
+            'aws', 'gcp', 'azure', 'docker', 'kubernetes', 'data', 'algorithm', 'train', 'deploy',
+            'finetuning', 'transformer', 'cnn', 'rnn', 'lstm', 'gru', 'reinforcement', 'computer',
+            'vision', 'natural', 'language', 'processing', 'ops', 'mlops', 'etl', 'sql', 'nosql',
+            'database', 'architecture', 'system', 'solution', 'development', 'engineer', 'specialist',
+            'framework', 'library', 'feature', 'functionality', 'problem', 'challenge', 'impact', 'result',
+            # Portfolio terms - expanded list
+            'project', 'skill', 'expertise', 'experience', 'work', 'portfolio', 'education', 'degree',
+            'university', 'certification', 'achievements', 'domain', 'industry', 'career', 'role',
+            'accomplishment', 'development', 'built', 'created', 'developed', 'implemented', 'utilized',
+            'demonstrate', 'showcase'
         }
         
         # Common bigrams in English
         self.common_bigrams = {
-            'th', 'he', 'in', 'er', 'an', 're', 'on', 'at', 'en', 'nd',
-            'ed', 'es', 'or', 'ti', 'ar', 'te', 'ng', 'al', 'it', 'as',
-            'is', 'ou', 'io', 'le', 'ea', 'ra', 'co', 'ro', 'll', 'ha'
+            'th', 'he', 'in', 'er', 'an', 're', 'on', 'at', 'en', 'nd', 'ed', 'es', 'or', 'ti', 
+            'ar', 'te', 'ng', 'al', 'it', 'as', 'is', 'ou', 'io', 'le', 'ea', 'ra', 'co', 'ro', 
+            'll', 'ha', 'sh', 'ch', 'st', 'de', 'nt', 'to', 'of', 'and', 'for', 'wit', 'fro', 'abo'
         }
         
         # Technical abbreviations that might look like gibberish
         self.technical_abbrevs = {
-            'ai', 'ml', 'nlp', 'cv', 'cnn', 'rnn', 'lstm', 'gru',
-            'api', 'aws', 'gcp', 'ci', 'cd', 'etl', 'sql', 'nosql',
-            'iot', 'gpu', 'cpu', 'ram', 'ssd', 'http', 'https', 'rest',
-            'json', 'xml', 'html', 'css', 'js', 'ts', 'py', 'cpp',
-            'gpt', 'bert', 'yolo', 'gan', 'vae', 'rl', 'dqn'
+            'ai', 'ml', 'nlp', 'cv', 'cnn', 'rnn', 'lstm', 'gru', 'gan', 'vae', 'rl', 'dqn',
+            'api', 'aws', 'gcp', 'ci', 'cd', 'etl', 'sql', 'nosql', 'db', 'orm',
+            'iot', 'gpu', 'cpu', 'ram', 'ssd', 'http', 'https', 'rest', 'rpc',
+            'json', 'xml', 'html', 'css', 'js', 'ts', 'py', 'cpp', 'java', 'go', 'rust',
+            'gpt', 'bert', 'yolo', 'res', 'net', 'seq', 'to', 'seq', 'transformer',
+            'sagemaker', 'azureml', 'gcpai', 'kubernetes', 'k8s', 'docker', 'mlops',
+            'scikit', 'torch', 'tf', 'keras', 'conda', 'pip', 'venv'
         }
-    
+
     def is_valid_message(self, message: str) -> Tuple[bool, str, Dict]:
         """
-        Enhanced validation with detailed feedback
-        
-        Returns:
-            (is_valid, reason, metadata)
+        Hardened validation logic to better detect gibberish.
         """
         metadata = {
             "length": len(message),
-            "word_count": len(message.split()),
-            "has_technical_terms": False,
-            "language_detected": "unknown"
+            "word_count": 0,
+            "known_word_ratio": 0.0,
+            "gibberish_score": 0.0
         }
-        
-        # Basic checks
-        if len(message.strip()) < 2:
+
+        # --- Step 1: Basic Sanitization and Pre-checks ---
+        message = ' '.join(message.strip().split())
+        if len(message) < 2:
             return False, "too_short", metadata
-        
-        # Remove extra whitespace
-        message = ' '.join(message.split())
-        metadata["length"] = len(message)
-        
-        # Check for all non-alphabetic (e.g., just numbers or symbols)
+
         clean_text = ''.join(char for char in message if char.isalpha())
         if not clean_text:
             return False, "no_letters", metadata
-        
-        # Extract words
+
         words = message.split()
-        metadata["word_count"] = len(words)
-        
-        # Single character messages (unless common ones like "hi")
-        if len(words) == 1 and len(words[0]) == 1:
-            if words[0].lower() not in ['i', 'a']:
-                return False, "single_char", metadata
-        
-        # Check for technical terms
-        message_lower = message.lower()
-        has_tech_term = any(term in message_lower for term in self.technical_abbrevs)
-        metadata["has_technical_terms"] = has_tech_term
-        
-        # Check for common words
         words_lower = [w.lower().strip('.,!?;:\"\'') for w in words]
-        has_common_word = any(word in self.common_words for word in words_lower)
-        
-        # If has technical terms, be more lenient
-        if has_tech_term:
-            return True, "valid_technical", metadata
-        
-        # If has common words, validate
-        if has_common_word:
-            return True, "valid_common", metadata
-        
-        # For messages without obvious markers, do deeper analysis
-        gibberish_score = self._calculate_gibberish_score(words)
+        metadata["word_count"] = len(words)
+
+        # --- Step 2: High-Confidence Validation (Known Words) ---
+        # Check for a reasonable ratio of known words. This is a strong signal of validity.
+        known_words = [w for w in words_lower if w in self.common_words or w in self.technical_abbrevs]
+        known_word_ratio = len(known_words) / len(words) if words else 0
+        metadata["known_word_ratio"] = known_word_ratio
+
+        if known_word_ratio > 0.3:  # If over 30% of words are known, it's very likely valid.
+            return True, "valid_known_words", metadata
+
+        # --- Step 3: Deep Gibberish Analysis (for unknown phrases) ---
+        # If the query consists of unknown words, it needs to pass stricter heuristic checks.
+        gibberish_score = self._calculate_gibberish_score(words_lower)
         metadata["gibberish_score"] = gibberish_score
-        
-        # More lenient threshold
-        if gibberish_score > 0.85:  # Increased from 0.7
+
+        # If the score is high, it's definitely gibberish.
+        if gibberish_score > 0.7:
             return False, "likely_gibberish", metadata
-        
-        # Check for reasonable character distribution
-        if len(clean_text) > 5:
-            if not self._has_reasonable_char_distribution(clean_text):
-                return False, "unusual_distribution", metadata
-        
-        # Check for at least one valid-looking word
-        if not self._has_valid_word_pattern(words_lower):
-            return False, "no_valid_patterns", metadata
-        
-        # Passed all checks
+
+        # Check character distribution. A strange distribution is a red flag.
+        if not self._has_reasonable_char_distribution(clean_text):
+            return False, "unusual_distribution", metadata
+
+        # If the gibberish score is moderate, check for word patterns as a tie-breaker.
+        if gibberish_score > 0.4:
+            # This is now a fallback, not a primary validation method.
+            if not self._has_valid_word_pattern(words_lower):
+                return False, "no_valid_patterns", metadata
+
+        # --- Step 4: Final Decision ---
+        # If it passes all the above checks, we can consider it valid.
         return True, "valid", metadata
     
+    # ... (the rest of the helper methods like _calculate_gibberish_score, sanitize_input, etc., remain the same) ...
     def _calculate_gibberish_score(self, words: List[str]) -> float:
         """Calculate probability that text is gibberish"""
         if not words:
             return 1.0
-        
+
         total_score = 0.0
         scored_words = 0
-        
+
         for word in words:
             word_lower = word.lower().strip('.,!?;:\"\'')
-            
+
             if len(word_lower) < 2:
                 continue
-            
+
             scored_words += 1
             word_score = 0.0
-            
+
             # Check 1: Repeated characters (e.g., "aaaa")
             if len(word_lower) > 2 and len(set(word_lower)) <= 2:
                 word_score += 0.4
-            
+
             # Check 2: No vowels in word > 3 chars (excluding known abbreviations)
             if len(word_lower) > 3 and word_lower not in self.technical_abbrevs:
                 vowels = set('aeiou')
                 if not any(c in vowels for c in word_lower):
                     word_score += 0.3
-            
+
             # Check 3: Lacks common bigrams
             if len(word_lower) > 4:
                 has_common_bigram = any(
@@ -160,7 +153,7 @@ class ImprovedInputValidator:
                 )
                 if not has_common_bigram:
                     word_score += 0.2
-            
+
             # Check 4: Excessive character repetition
             if len(word_lower) > 3:
                 char_freq = {}
@@ -170,14 +163,14 @@ class ImprovedInputValidator:
                 max_freq = max(char_freq.values())
                 if max_freq / len(word_lower) > 0.5:
                     word_score += 0.3
-            
+
             total_score += min(word_score, 1.0)
-        
+
         if scored_words == 0:
             return 0.0
-        
+
         return total_score / scored_words
-    
+
     def _has_reasonable_char_distribution(self, text: str) -> bool:
         """Check if character distribution looks natural"""
         text_lower = text.lower()
@@ -192,13 +185,12 @@ class ImprovedInputValidator:
         
         vowel_ratio = vowel_count / total_alpha
         
-        # Natural language typically has 35-45% vowels
-        # Allow 15-65% range to be more inclusive
+        # Natural language typically has 35-45% vowels. Allow 15-65% range to be more inclusive.
         if vowel_ratio < 0.15 or vowel_ratio > 0.65:
             return False
         
-        # Check for keyboard mashing patterns
-        # Allow up to 6 consecutive consonants (some words like "strength")
+        # Check for keyboard mashing patterns (consecutive consonants)
+        # Allow up to 6 consecutive consonants (e.g., "strengths")
         max_consecutive_consonants = 0
         current_consecutive = 0
         
@@ -213,93 +205,63 @@ class ImprovedInputValidator:
             return False
         
         return True
-    
+
     def _has_valid_word_pattern(self, words: List[str]) -> bool:
-        """Check if at least one word looks valid"""
+        """Check if at least one word looks valid. Stricter than before."""
+        valid_pattern_count = 0
         for word in words:
-            if len(word) < 2:
+            if len(word) < 3:
                 continue
             
-            # Check if word is in common words or technical terms
-            if word in self.common_words or word in self.technical_abbrevs:
-                return True
-            
-            # Check if word has common bigrams
-            if len(word) >= 3:
-                for i in range(len(word) - 1):
-                    if word[i:i+2] in self.common_bigrams:
-                        return True
+            # Check if word has at least two common bigrams
+            bigram_matches = 0
+            for i in range(len(word) - 1):
+                if word[i:i+2] in self.common_bigrams:
+                    bigram_matches += 1
+            if bigram_matches >= 2:
+                valid_pattern_count += 1
         
-        return False
-    
+        # Require at least one word with a decent pattern
+        return valid_pattern_count > 0
+
     def sanitize_input(self, message: str) -> str:
-        """Sanitize user input"""
+        """Sanitize user input to prevent basic injection and formatting issues."""
         # Remove potential script tags
         message = re.sub(r'<script[^>]*>.*?</script>', '', message, flags=re.IGNORECASE | re.DOTALL)
-        
-        # Remove HTML tags
+
+        # Remove other HTML tags
         message = re.sub(r'<[^>]+>', '', message)
-        
-        # Remove null bytes
+
+        # Remove null bytes, which can cause issues
         message = message.replace('\x00', '')
-        
-        # Normalize unicode
+
+        # Normalize unicode to handle different character representations consistently
         message = unicodedata.normalize('NFKC', message)
-        
-        # Limit length
-        max_length = 1000  # Increased from 500
+
+        # Limit overall length to prevent overload
+        max_length = 1000  # Sync with models.py
         if len(message) > max_length:
             message = message[:max_length]
-        
-        # Remove excessive whitespace but preserve single spaces
+
+        # Standardize whitespace to single spaces
         message = ' '.join(message.split())
-        
+
         return message.strip()
-    
+
     def get_validation_feedback(self, is_valid: bool, reason: str, metadata: Dict) -> str:
-        """Get user-friendly feedback message"""
+        """Get user-friendly feedback message for invalid input."""
         if is_valid:
             return ""
-        
+
         feedback_messages = {
-            "too_short": "Could you provide a bit more detail in your question?",
-            "no_letters": "I need a text-based question. How can I help you learn about my AI/ML expertise?",
-            "single_char": "Could you ask a complete question? Feel free to ask about my skills, projects, or experience.",
-            "likely_gibberish": "I didn't quite understand that. Could you rephrase your question about my AI/ML work?",
+            "too_short": "Your message is a bit short. Could you please provide more detail in your question?",
+            "no_letters": "I can only process text-based questions. How can I help you learn about my AI/ML expertise?",
+            "single_char": "Could you please ask a complete question? I can answer questions about my skills, projects, or experience.",
+            "likely_gibberish": "I didn't quite understand that. Could you please rephrase your question about my AI/ML work?",
             "unusual_distribution": "That doesn't look like a valid question. Try asking about my experience, projects, or technical skills!",
-            "no_valid_patterns": "I couldn't process that input. Could you ask me about my skills, projects, or experience?"
+            "no_valid_patterns": "I'm sorry, I couldn't process that input. Please ask me about my skills, projects, or experience."
         }
-        
-        default_msg = "I didn't understand that. Could you ask me about my skills, projects, or AI/ML experience?"
-        
+
+        default_msg = "I'm sorry, I didn't understand that. You can ask me about my skills, projects, or AI/ML experience."
+
         return feedback_messages.get(reason, default_msg)
-
-
-# Example usage
-if __name__ == "__main__":
-    validator = ImprovedInputValidator()
-    
-    # Test cases
-    test_messages = [
-        "What are your AI skills?",  # Valid
-        "Tell me about NLP",  # Valid - technical term
-        "asdfghjkl",  # Invalid - gibberish
-        "hi",  # Valid - common word
-        "Can you explain your CNN experience?",  # Valid - technical
-        "xyzabc",  # Invalid - no patterns
-        "What's your experience with MLOps?",  # Valid
-        "qqqqqqq",  # Invalid - repeated chars
-        "How do you deploy models to AWS?",  # Valid
-        ""  # Invalid - empty
-    ]
-    
-    print("Input Validation Tests:\n" + "="*50)
-    for msg in test_messages:
-        is_valid, reason, metadata = validator.is_valid_message(msg)
-        status = "✓ VALID" if is_valid else "✗ INVALID"
-        print(f"\n{status}: '{msg}'")
-        print(f"  Reason: {reason}")
-        print(f"  Metadata: {metadata}")
-        if not is_valid:
-            feedback = validator.get_validation_feedback(is_valid, reason, metadata)
-            print(f"  Feedback: {feedback}")

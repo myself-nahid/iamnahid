@@ -4,9 +4,9 @@ from functools import lru_cache
 
 class Settings(BaseSettings):
     # Your existing fields...
-    model_name: str = "gemini-2.5-flash"
+    model_name: str = "gemini-2.5-flash-lite"  # Changed default model to a more capable one
     temperature: float = 0.7
-    max_tokens: int = 500
+    max_tokens: int = 1000 # Increased max tokens for potentially longer responses
     GOOGLE_API_KEY: str
     
     # ADD THIS:

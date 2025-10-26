@@ -4,12 +4,13 @@ Optimized Portfolio Agent with Improved Confidence Scoring
 - Enhanced confidence calculation
 - More accurate validation
 - Optimized for greeting/simple queries
+- FIXED: Proper conversation history management within LangGraph state
 """
 
 from typing import TypedDict, Annotated, List, Dict, Any
 from langgraph.graph import StateGraph, END
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain.schema import HumanMessage, SystemMessage
+from langchain.schema import HumanMessage, SystemMessage, AIMessage # Added AIMessage
 import operator
 import json
 import re
@@ -20,7 +21,7 @@ import math
 
 class EnhancedAgentState(TypedDict):
     """Enhanced state with additional tracking"""
-    messages: Annotated[list, operator.add]
+    messages: Annotated[list, operator.add] # This accumulates messages across steps
     user_query: str
     response: str
     knowledge_base: dict
@@ -346,8 +347,8 @@ def create_enhanced_portfolio_agent(config):
     
     llm = ChatGoogleGenerativeAI(
         model=config.model_name,
-        temperature=0.3,
-        max_tokens=config.max_tokens,
+        temperature=config.temperature, # Use config temperature
+        max_tokens=config.max_tokens,   # Use config max_tokens
         google_api_key=config.GOOGLE_API_KEY,
         convert_system_message_to_human=True
     )
@@ -374,7 +375,7 @@ def create_enhanced_portfolio_agent(config):
         return {
             **state,
             "query_type": classification["type"],
-            "reasoning_steps": [f"Query classified as: {classification['type']}"]
+            "reasoning_steps": state.get("reasoning_steps", []) + [f"Query classified as: {classification['type']}"]
         }
     
     def retrieve_context(state: EnhancedAgentState) -> EnhancedAgentState:
@@ -392,16 +393,15 @@ def create_enhanced_portfolio_agent(config):
         }
     
     def generate_grounded_response(state: EnhancedAgentState) -> EnhancedAgentState:
-        """Generate response grounded in retrieved context"""
-        from app.prompts.system_prompts import get_system_prompt
+        """Generate response grounded in retrieved context and conversation history."""
+        from app.prompts.system_prompts import get_system_prompt_with_examples
         
-        # Limit conversation history to last 10 messages to prevent memory issues
+        # The `messages` here is the accumulated history from LangGraph's state
         conversation_history = state.get("messages", [])
-        if len(conversation_history) > 10:
-            conversation_history = conversation_history[-10:]
         
         # Build enhanced system prompt with retrieved context
-        base_prompt = get_system_prompt(state["knowledge_base"])
+        # Using get_system_prompt_with_examples to provide better guidance to the LLM
+        base_prompt_content = get_system_prompt_with_examples(state["knowledge_base"], include_examples=True)
         
         # Handle greetings specially
         if state["query_type"] == "greeting":
@@ -422,23 +422,32 @@ You MUST base your response ONLY on the information provided in the knowledge ba
 If the information is not present, clearly state: "I don't have specific information about that in my knowledge base."
 DO NOT make up or infer information that isn't explicitly stated.
 Be confident and professional in your responses.
+Respond in plain text without markdown formatting for optimal display in the chat interface.
 """
         
-        full_prompt = base_prompt + context_prompt
+        full_prompt_content = base_prompt_content + context_prompt
         
-        messages = [
-            SystemMessage(content=full_prompt),
-            HumanMessage(content=state["user_query"])
-        ]
+        # Prepare messages for LLM, including system prompt and history
+        llm_messages = [SystemMessage(content=full_prompt_content)]
         
-        response = llm.invoke(messages)
+        # Add conversation history
+        for msg_entry in conversation_history:
+            if msg_entry["role"] == "user":
+                llm_messages.append(HumanMessage(content=msg_entry["content"]))
+            elif msg_entry["role"] == "assistant":
+                llm_messages.append(AIMessage(content=msg_entry["content"]))
+        
+        # Add current user query
+        llm_messages.append(HumanMessage(content=state["user_query"]))
+        
+        response = llm.invoke(llm_messages)
         
         return {
             **state,
             "response": response.content,
             "needs_validation": True,
             "reasoning_steps": state.get("reasoning_steps", []) + 
-                              ["Generated response using grounded context"]
+                              ["Generated response using grounded context and conversation history"]
         }
     
     def validate_response(state: EnhancedAgentState) -> EnhancedAgentState:
@@ -459,15 +468,21 @@ Be confident and professional in your responses.
         if not validation["is_valid"] and validation["confidence"] < 0.3:
             strict_prompt = """You provided information that couldn't be verified in the knowledge base.
 Please try again, being extremely strict about only stating facts that are explicitly present.
-If uncertain, say so clearly rather than making assumptions."""
+If uncertain, say so clearly rather than making assumptions.
+Respond in plain text without markdown formatting."""
             
-            messages = [
-                SystemMessage(content=strict_prompt),
-                HumanMessage(content=f"Original query: {state['user_query']}\n\n"
-                           f"Issues found: {', '.join(validation['issues'])}")
-            ]
+            # Use the existing conversation history for regeneration context
+            llm_messages_for_regen = [SystemMessage(content=strict_prompt)]
+            for msg_entry in state.get("messages", []):
+                if msg_entry["role"] == "user":
+                    llm_messages_for_regen.append(HumanMessage(content=msg_entry["content"]))
+                elif msg_entry["role"] == "assistant":
+                    llm_messages_for_regen.append(AIMessage(content=msg_entry["content"]))
             
-            corrected = llm.invoke(messages)
+            llm_messages_for_regen.append(HumanMessage(content=f"Original query: {state['user_query']}\n\n"
+                                           f"Issues found: {', '.join(validation['issues'])}"))
+            
+            corrected = llm.invoke(llm_messages_for_regen)
             
             return {
                 **state,
@@ -484,10 +499,21 @@ If uncertain, say so clearly rather than making assumptions."""
         }
     
     def finalize_response(state: EnhancedAgentState) -> EnhancedAgentState:
-        """Finalize and format response"""
-        # Create new message pair (don't use operator.add, return single items)
-        new_messages = [
-            {"role": "user", "content": state["user_query"]},
+        """Finalize and format response, updating the full message history."""
+        
+        # Append the current user query and assistant response to the accumulated messages
+        # LangGraph's operator.add handles the accumulation for 'messages' state key.
+        # Here, we need to explicitly format the current user and assistant messages
+        # and return the *entire* updated messages list.
+        
+        current_messages = state.get("messages", [])
+        
+        # Ensure the last user message in the state is the current user_query
+        # This prevents duplicate user messages if the state was updated earlier
+        if not current_messages or current_messages[-1].get("content") != state["user_query"]:
+             current_messages.append({"role": "user", "content": state["user_query"]})
+        
+        current_messages.append(
             {
                 "role": "assistant", 
                 "content": state["response"],
@@ -497,11 +523,11 @@ If uncertain, say so clearly rather than making assumptions."""
                     "reasoning_steps": state.get("reasoning_steps", [])
                 }
             }
-        ]
+        )
         
         return {
             **state,
-            "messages": new_messages  # Return only new messages, operator.add handles accumulation
+            "messages": current_messages # Return the full, updated list of messages
         }
     
     # Create graph
