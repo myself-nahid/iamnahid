@@ -180,8 +180,17 @@
         section {
             position: relative;
             min-height: 100vh;
-            padding: 6rem 10%;
+            padding: 6rem 5%; /* Adjusted padding for better spacing */
             z-index: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px; /* Added max-width for large screens */
+            margin: 0 auto;
         }
 
         .hero {
@@ -189,10 +198,11 @@
             flex-direction: column;
             justify-content: center;
             align-items: flex-start;
+            text-align: left; /* Ensure text is aligned left */
         }
 
         .hero h1 {
-            font-size: 5rem;
+            font-size: clamp(2.5rem, 8vw, 5rem); /* Fluid typography */
             font-weight: 800;
             line-height: 1.1;
             margin-bottom: 1rem;
@@ -207,7 +217,7 @@
         }
 
         .hero p {
-            font-size: 1.3rem;
+            font-size: clamp(1rem, 4vw, 1.3rem); /* Fluid typography */
             color: #a0a0a0;
             margin-bottom: 2rem;
             max-width: 600px;
@@ -322,7 +332,7 @@
         }
 
         .section-title {
-            font-size: 3rem;
+            font-size: clamp(2rem, 6vw, 3rem); /* Fluid typography */
             font-weight: 700;
             margin-bottom: 3rem;
             text-align: center;
@@ -330,7 +340,7 @@
 
         .skills-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Adjusted minmax */
             gap: 2rem;
             margin-top: 3rem;
         }
@@ -1012,18 +1022,11 @@
             }
         }
 
-        /* Mobile Responsive Styles */
+        /* Responsive Styles */
         @media (max-width: 1024px) {
-            .hero h1 {
-                font-size: 3.5rem;
-            }
-
-            .section-title {
-                font-size: 2.5rem;
-            }
-
             section {
                 padding: 5rem 7%;
+                min-height: auto; /* Allow sections to have natural height */
             }
         }
 
@@ -1048,10 +1051,10 @@
 
             .nav-links {
                 position: fixed;
-                top: 70px;
+                top: 60px; /* Adjusted top position */
                 left: -100%;
                 width: 100%;
-                height: calc(100vh - 70px);
+                height: calc(100vh - 60px);
                 background: rgba(10, 10, 10, 0.98);
                 backdrop-filter: blur(20px);
                 flex-direction: column;
@@ -1087,67 +1090,21 @@
 
             section {
                 padding: 4rem 5%;
-                min-height: auto;
+            }
+            
+            #home.hero {
+                padding-top: 6rem; /* Add padding to push content down from nav */
+                text-align: center;
+                align-items: center;
             }
 
-            .hero {
-                padding-top: 2rem;
-                margin-top: 100px;
-            }
-
-            .hero h1 {
-                font-size: 2.5rem;
-                line-height: 1.2;
-            }
-
-            .hero p {
-                font-size: 1.1rem;
-            }
-
-            .hero-badges {
-                gap: 0.8rem;
-            }
-
-            .badge {
-                padding: 0.4rem 0.8rem;
-                font-size: 0.85rem;
-            }
-
-            .badge-icon {
-                font-size: 1rem;
-            }
-
-            .cta-button {
-                padding: 0.9rem 2rem;
-                font-size: 1rem;
+            .hero h1, .hero p {
+                text-align: center;
             }
 
             .stats-container {
-                flex-direction: column;
+                justify-content: center;
                 gap: 2rem;
-                margin-top: 2rem;
-            }
-
-            .stat-item {
-                min-width: auto;
-            }
-
-            .stat-number {
-                font-size: 2rem;
-            }
-
-            .section-title {
-                font-size: 2rem;
-                margin-bottom: 2rem;
-            }
-
-            .skills-grid {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-
-            .skill-card {
-                padding: 1.5rem;
             }
 
             .education-timeline::before {
@@ -1190,26 +1147,12 @@
                 font-size: 1rem;
             }
 
-            .certifications-grid {
+            .certifications-grid, .projects-grid, .skills-grid {
                 grid-template-columns: 1fr;
-                gap: 1.5rem;
             }
-
-            .cert-card {
-                padding: 1.5rem;
-            }
-
-            .projects-grid {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-
+            
             .project-content {
                 padding: 1.5rem;
-            }
-
-            .project-card h3 {
-                font-size: 1.3rem;
             }
 
             .contact-links {
@@ -1222,7 +1165,7 @@
 
             .chatbot-window {
                 width: calc(100vw - 2rem);
-                height: calc(100vh - 8rem);
+                height: 70vh; /* Adjusted height */
                 right: 1rem;
                 left: 1rem;
                 bottom: 5rem;
@@ -1236,46 +1179,10 @@
         }
 
         @media (max-width: 480px) {
-            .hero{
-                margin-top: 100px;
+             #home.hero {
+                padding-top: 5rem;
             }
-            .hero h1 {
-                font-size: 2rem;
-            }
-
-            .hero p {
-                font-size: 1rem;
-            }
-
-            .section-title {
-                font-size: 1.8rem;
-            }
-
-            .stat-number {
-                font-size: 1.8rem;
-            }
-
-            .stat-label {
-                font-size: 0.85rem;
-            }
-
-            .skill-icon {
-                font-size: 2.5rem;
-            }
-
-            .skill-card h3 {
-                font-size: 1.3rem;
-            }
-
-            .project-image {
-                height: 150px;
-                font-size: 3rem;
-            }
-
-            .cert-icon {
-                font-size: 2.5rem;
-            }
-
+            
             .contact-container p {
                 font-size: 1rem;
             }
@@ -1295,14 +1202,6 @@
         }
 
         @media (max-width: 360px) {
-            .hero h1 {
-                font-size: 1.8rem;
-            }
-
-            .hero{
-                margin-top: 100px;
-            }
-
             .badge {
                 font-size: 0.75rem;
                 padding: 0.3rem 0.6rem;
@@ -1337,217 +1236,225 @@
     </nav>
 
     <section id="home" class="hero">
-        <h1>
-            Hi, I'm <span class="simple-animation">Nahid Hasan</span><br>
-            AI Engineer & ML Specialist
-        </h1>
-        <p>Building intelligent systems that transform data into actionable insights. Specialized in deep learning, NLP, and computer vision.</p>
-        
-        <div class="hero-badges">
-            <div class="badge">
-                <span class="badge-icon">🎓</span>
-                <span>B.Sc in Computer Science</span>
+        <div class="container">
+            <h1>
+                Hi, I'm <span class="simple-animation">Nahid Hasan</span><br>
+                AI Engineer & ML Specialist
+            </h1>
+            <p>Building intelligent systems that transform data into actionable insights. Specialized in deep learning, NLP, and computer vision.</p>
+            
+            <div class="hero-badges">
+                <div class="badge">
+                    <span class="badge-icon">🎓</span>
+                    <span>B.Sc in Computer Science</span>
+                </div>
+                <div class="badge">
+                    <span class="badge-icon">🏆</span>
+                    <span>AI Research Published</span>
+                </div>
+                <div class="badge">
+                    <span class="badge-icon">💼</span>
+                    <span>1+ Years Experience</span>
+                </div>
             </div>
-            <div class="badge">
-                <span class="badge-icon">🏆</span>
-                <span>AI Research Published</span>
-            </div>
-            <div class="badge">
-                <span class="badge-icon">💼</span>
-                <span>1+ Years Experience</span>
-            </div>
-        </div>
-        
-        <a href="#contact" class="cta-button">Get In Touch</a>
-        
-        <div class="stats-container">
-            <div class="stat-item">
-                <div class="stat-number">20+</div>
-                <div class="stat-label">Projects Completed</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number">2+</div>
-                <div class="stat-label">ML Models Deployed</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number">98%</div>
-                <div class="stat-label">Client Satisfaction</div>
+            
+            <a href="#contact" class="cta-button">Get In Touch</a>
+            
+            <div class="stats-container">
+                <div class="stat-item">
+                    <div class="stat-number">20+</div>
+                    <div class="stat-label">Projects Completed</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">2+</div>
+                    <div class="stat-label">ML Models Deployed</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">98%</div>
+                    <div class="stat-label">Client Satisfaction</div>
+                </div>
             </div>
         </div>
     </section>
 
     <section id="skills">
-        <h2 class="section-title">Technical <span class="gradient-text">Expertise</span></h2>
-        <div class="skills-grid">
-            <div class="skill-card">
-                <div class="skill-icon">🤖</div>
-                <h3>Machine Learning</h3>
-                <p>Expert in developing and deploying ML models using TensorFlow, PyTorch, and scikit-learn. Specialized in deep neural networks and reinforcement learning.</p>
-            </div>
-            <div class="skill-card">
-                <div class="skill-icon">💬</div>
-                <h3>Natural Language Processing</h3>
-                <p>Advanced experience with transformer models, BERT, GPT architectures, and LLM fine-tuning for various NLP tasks.</p>
-            </div>
-            <div class="skill-card">
-                <div class="skill-icon">👁️</div>
-                <h3>Computer Vision</h3>
-                <p>Proficient in CNNs, object detection, image segmentation, and real-time video processing using OpenCV and YOLO.</p>
-            </div>
-            <div class="skill-card">
-                <div class="skill-icon">☁️</div>
-                <h3>MLOps & Cloud</h3>
-                <p>Experienced in model deployment, monitoring, and scaling on AWS, GCP, and Azure. Kubernetes, Docker, and CI/CD pipelines.</p>
-            </div>
-            <div class="skill-card">
-                <div class="skill-icon">📊</div>
-                <h3>Data Engineering</h3>
-                <p>Strong foundation in data pipelines, ETL processes, and big data technologies like Spark, Airflow, and SQL databases.</p>
-            </div>
-            <div class="skill-card">
-                <div class="skill-icon">🔬</div>
-                <h3>Research & Innovation</h3>
-                <p>Published researcher with experience in experimental design, A/B testing, and staying current with latest AI developments.</p>
+        <div class="container">
+            <h2 class="section-title">Technical <span class="gradient-text">Expertise</span></h2>
+            <div class="skills-grid">
+                <div class="skill-card">
+                    <div class="skill-icon">🤖</div>
+                    <h3>Machine Learning</h3>
+                    <p>Expert in developing and deploying ML models using TensorFlow, PyTorch, and scikit-learn. Specialized in deep neural networks and reinforcement learning.</p>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon">💬</div>
+                    <h3>Natural Language Processing</h3>
+                    <p>Advanced experience with transformer models, BERT, GPT architectures, and LLM fine-tuning for various NLP tasks.</p>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon">👁️</div>
+                    <h3>Computer Vision</h3>
+                    <p>Proficient in CNNs, object detection, image segmentation, and real-time video processing using OpenCV and YOLO.</p>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon">☁️</div>
+                    <h3>MLOps & Cloud</h3>
+                    <p>Experienced in model deployment, monitoring, and scaling on AWS, GCP, and Azure. Kubernetes, Docker, and CI/CD pipelines.</p>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon">📊</div>
+                    <h3>Data Engineering</h3>
+                    <p>Strong foundation in data pipelines, ETL processes, and big data technologies like Spark, Airflow, and SQL databases.</p>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon">🔬</div>
+                    <h3>Research & Innovation</h3>
+                    <p>Published researcher with experience in experimental design, A/B testing, and staying current with latest AI developments.</p>
+                </div>
             </div>
         </div>
     </section>
 
     <section id="education">
-        <h2 class="section-title">Education & <span class="gradient-text">Certifications</span></h2>
-        
-        <div class="education-timeline">
-            <div class="education-item">
-                <div class="education-date">2018 - 2024</div>
-                <div class="education-icon">🎓</div>
-                <div class="education-content">
-                    <h3>Bachelor of Science in Computer Engineering</h3>
-                    <h4>Gopalgonj Science and Technology University</h4>
-                    <p>Specialized in Artificial Intelligence and Machine Learning with focus on deep learning architectures and neural networks.</p>
-                    <div class="education-achievements">
-                        <div class="achievement">Successfully completed a thesis-based AI project</div>
-                        <div class="achievement">Led multiple AI research lab projects</div>
-                        <div class="achievement">Executed end-to-end data analysis using Python</div>
+        <div class="container">
+            <h2 class="section-title">Education & <span class="gradient-text">Certifications</span></h2>
+            
+            <div class="education-timeline">
+                <div class="education-item">
+                    <div class="education-date">2018 - 2024</div>
+                    <div class="education-icon">🎓</div>
+                    <div class="education-content">
+                        <h3>Bachelor of Science in Computer Engineering</h3>
+                        <h4>Gopalgonj Science and Technology University</h4>
+                        <p>Specialized in Artificial Intelligence and Machine Learning with focus on deep learning architectures and neural networks.</p>
+                        <div class="education-achievements">
+                            <div class="achievement">Successfully completed a thesis-based AI project</div>
+                            <div class="achievement">Led multiple AI research lab projects</div>
+                            <div class="achievement">Executed end-to-end data analysis using Python</div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            
-            <div class="education-item">
-                <div class="education-date">2015 - 2017</div>
-                <div class="education-icon">📚</div>
-                <div class="education-content">
-                    <h3>High School Certificate</h3>
-                    <h4>Noakhali Govt. College</h4>
-                    <p>Strong foundation in Science, Mathmatics and Biology</p>
-                    <div class="education-achievements">
-                        <div class="achievement">Member of Science Club</div>
-                        <div class="achievement">Member of Science Club</div>
-                        <div class="achievement">Member of Science Club</div>
+                
+                <div class="education-item">
+                    <div class="education-date">2015 - 2017</div>
+                    <div class="education-icon">📚</div>
+                    <div class="education-content">
+                        <h3>High School Certificate</h3>
+                        <h4>Noakhali Govt. College</h4>
+                        <p>Strong foundation in Science, Mathmatics and Biology</p>
+                        <div class="education-achievements">
+                            <div class="achievement">Member of Science Club</div>
+                            <div class="achievement">Member of Science Club</div>
+                            <div class="achievement">Member of Science Club</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="education-item">
+                    <div class="education-date">2010 - 2014</div>
+                    <div class="education-icon">📚</div>
+                    <div class="education-content">
+                        <h3>Secondary School Certificate</h3>
+                        <h4>Govt. Technical High School</h4>
+                        <p>Strong foundation in Science, Mathmatics, Biology and ICT</p>
+                        <div class="education-achievements">
+                            <div class="achievement">Member of Science Club</div>
+                            <div class="achievement">Member of Science Club</div>
+                            <div class="achievement">Member of Science Club</div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="education-item">
-                <div class="education-date">2010 - 2014</div>
-                <div class="education-icon">📚</div>
-                <div class="education-content">
-                    <h3>Secondary School Certificate</h3>
-                    <h4>Govt. Technical High School</h4>
-                    <p>Strong foundation in Science, Mathmatics, Biology and ICT</p>
-                    <div class="education-achievements">
-                        <div class="achievement">Member of Science Club</div>
-                        <div class="achievement">Member of Science Club</div>
-                        <div class="achievement">Member of Science Club</div>
-                    </div>
+            <h3 class="section-title" style="font-size: 2rem; margin-top: 4rem;">Professional <span class="gradient-text">Certifications</span></h3>
+            
+            <div class="certifications-grid">
+                <div class="cert-card">
+                    <div class="cert-icon">🏅</div>
+                    <h3>TensorFlow Developer Certificate</h3>
+                    <p class="cert-issuer">Google</p>
+                    <p class="cert-date">2024</p>
                 </div>
-            </div>
-        </div>
-
-        <h3 class="section-title" style="font-size: 2rem; margin-top: 4rem;">Professional <span class="gradient-text">Certifications</span></h3>
-        
-        <div class="certifications-grid">
-            <div class="cert-card">
-                <div class="cert-icon">🏅</div>
-                <h3>TensorFlow Developer Certificate</h3>
-                <p class="cert-issuer">Google</p>
-                <p class="cert-date">2024</p>
-            </div>
-            
-            <div class="cert-card">
-                <div class="cert-icon">☁️</div>
-                <h3>AWS Machine Learning Specialty</h3>
-                <p class="cert-issuer">Amazon Web Services</p>
-                <p class="cert-date">2023</p>
-            </div>
-            
-            <div class="cert-card">
-                <div class="cert-icon">🎯</div>
-                <h3>Deep Learning Specialization</h3>
-                <p class="cert-issuer">DeepLearning.AI</p>
-                <p class="cert-date">2023</p>
-            </div>
-            
-            <div class="cert-card">
-                <div class="cert-icon">📘</div>
-                <h3>Azure AI Engineer Associate</h3>
-                <p class="cert-issuer">Microsoft</p>
-                <p class="cert-date">2024</p>
+                
+                <div class="cert-card">
+                    <div class="cert-icon">☁️</div>
+                    <h3>AWS Machine Learning Specialty</h3>
+                    <p class="cert-issuer">Amazon Web Services</p>
+                    <p class="cert-date">2023</p>
+                </div>
+                
+                <div class="cert-card">
+                    <div class="cert-icon">🎯</div>
+                    <h3>Deep Learning Specialization</h3>
+                    <p class="cert-issuer">DeepLearning.AI</p>
+                    <p class="cert-date">2023</p>
+                </div>
+                
+                <div class="cert-card">
+                    <div class="cert-icon">📘</div>
+                    <h3>Azure AI Engineer Associate</h3>
+                    <p class="cert-issuer">Microsoft</p>
+                    <p class="cert-date">2024</p>
+                </div>
             </div>
         </div>
     </section>
 
     <section id="projects">
-        <h2 class="section-title">Featured <span class="gradient-text">Projects</span></h2>
-        <div class="projects-grid">
-            <div class="project-card">
-                <div class="project-image">🎯</div>
-                <div class="project-content">
-                    <h3>Orani-AI-Assistant</h3>
-                    <p>Orani is an AI-powered virtual receptionist that automates call handling, transcription, and messaging to streamline business communications. Integrating Twilio, Whisper, and ElevenLabs, it offers secure, multilingual telephony with CRM support, enhancing efficiency and customer engagement for SMBs.</p>
-                    <div class="project-tags">
-                        <span class="tag">Twilio</span>
-                        <span class="tag">Vapi</span>
-                        <span class="tag">ElevenLabs</span>
-                        <span class="tag">Whisper</span>
+        <div class="container">
+            <h2 class="section-title">Featured <span class="gradient-text">Projects</span></h2>
+            <div class="projects-grid">
+                <div class="project-card">
+                    <div class="project-image">🎯</div>
+                    <div class="project-content">
+                        <h3>Orani-AI-Assistant</h3>
+                        <p>Orani is an AI-powered virtual receptionist that automates call handling, transcription, and messaging to streamline business communications. Integrating Twilio, Whisper, and ElevenLabs, it offers secure, multilingual telephony with CRM support, enhancing efficiency and customer engagement for SMBs.</p>
+                        <div class="project-tags">
+                            <span class="tag">Twilio</span>
+                            <span class="tag">Vapi</span>
+                            <span class="tag">ElevenLabs</span>
+                            <span class="tag">Whisper</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="project-card">
-                <div class="project-image">🗣️</div>
-                <div class="project-content">
-                    <h3>Multi-Agent Orchestration with LangGraph</h3>
-                    <p>Developed a modular multi-agent orchestration system using LangGraph, modeling AI agent workflows as directed stateful graphs to enable flexible, scalable, and maintainable agent collaboration logic.</p>
-                    <div class="project-tags">
-                        <span class="tag">LangGraph</span>
-                        <span class="tag">Agent</span>
-                        <span class="tag">Automation</span>
-                        <span class="tag">LLM</span>
-                        <span class="tag">Python</span>
+                <div class="project-card">
+                    <div class="project-image">🗣️</div>
+                    <div class="project-content">
+                        <h3>Multi-Agent Orchestration with LangGraph</h3>
+                        <p>Developed a modular multi-agent orchestration system using LangGraph, modeling AI agent workflows as directed stateful graphs to enable flexible, scalable, and maintainable agent collaboration logic.</p>
+                        <div class="project-tags">
+                            <span class="tag">LangGraph</span>
+                            <span class="tag">Agent</span>
+                            <span class="tag">Automation</span>
+                            <span class="tag">LLM</span>
+                            <span class="tag">Python</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="project-card">
-                <div class="project-image">🏥</div>
-                <div class="project-content">
-                    <h3>AI-Medical-Solution-app</h3>
-                    <p>AI-Medical-Solution-app is a privacy-focused AI platform that automates clinical documentation using multimodal inputs and advanced transcription with OpenAI Whisper. Leveraging Google Gemini, it generates structured, multilingual clinical notes while ensuring secure, ephemeral processing. Built with FastAPI and a modular architecture, it delivers scalable, production-grade AI for healthcare workflows.</p>
-                    <div class="project-tags">
-                        <span class="tag">Whisper</span>
-                        <span class="tag">Python</span>
-                        <span class="tag">LLM</span>
+                <div class="project-card">
+                    <div class="project-image">🏥</div>
+                    <div class="project-content">
+                        <h3>AI-Medical-Solution-app</h3>
+                        <p>AI-Medical-Solution-app is a privacy-focused AI platform that automates clinical documentation using multimodal inputs and advanced transcription with OpenAI Whisper. Leveraging Google Gemini, it generates structured, multilingual clinical notes while ensuring secure, ephemeral processing. Built with FastAPI and a modular architecture, it delivers scalable, production-grade AI for healthcare workflows.</p>
+                        <div class="project-tags">
+                            <span class="tag">Whisper</span>
+                            <span class="tag">Python</span>
+                            <span class="tag">LLM</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="project-card">
-                <div class="project-image">🌾</div>
-                <div class="project-content">
-                    <h3>SMART AGRICULTURE FARMING</h3>
-                    <p>Smart Agriculture Farming is a web application that helps farmers make data-driven
-                    decisions using machine learning and deep learning. It has three main modules: Crop Recommendation suggests ideal crops based on environmental and soil data; Fertilizer Recommendation provides tailored fertilizer options for soil and crop needs; and Crop Disease Prediction detects diseases from images to enable timely intervention, enhancing yield and productivity.</p>
-                    <div class="project-tags">
-                        <span class="tag">Python</span>
-                        <span class="tag">Flask</span>
-                        <span class="tag">CNN</span>
-                        <span class="tag">Logistic Regression</span>
+                <div class="project-card">
+                    <div class="project-image">🌾</div>
+                    <div class="project-content">
+                        <h3>SMART AGRICULTURE FARMING</h3>
+                        <p>Smart Agriculture Farming is a web application that helps farmers make data-driven
+                        decisions using machine learning and deep learning. It has three main modules: Crop Recommendation suggests ideal crops based on environmental and soil data; Fertilizer Recommendation provides tailored fertilizer options for soil and crop needs; and Crop Disease Prediction detects diseases from images to enable timely intervention, enhancing yield and productivity.</p>
+                        <div class="project-tags">
+                            <span class="tag">Python</span>
+                            <span class="tag">Flask</span>
+                            <span class="tag">CNN</span>
+                            <span class="tag">Logistic Regression</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1555,16 +1462,18 @@
     </section>
 
     <section id="contact">
-        <div class="contact-container">
-            <h2 class="section-title">Let's <span class="gradient-text">Connect</span></h2>
-            <p style="font-size: 1.2rem; color: #a0a0a0; margin-bottom: 2rem;">
-                Interested in collaboration or have a project in mind? I'm always open to discussing new opportunities and innovative AI solutions.
-            </p>
-            <div class="contact-links">
-                <a href="mailto:nahidhasan.gst.cse@gmail.com" class="contact-link">📧</a>
-                <a href="https://github.com/myself-nahid" target="_blank" class="contact-link">💻</a>
-                <a href="https://www.linkedin.com/in/nahid-hasan-4b2a27363/" target="_blank" class="contact-link">💼</a>
-                <a href="https://www.kaggle.com/nhmishuk" target="_blank" class="contact-link">📊</a>
+        <div class="container">
+            <div class="contact-container">
+                <h2 class="section-title">Let's <span class="gradient-text">Connect</span></h2>
+                <p style="font-size: 1.2rem; color: #a0a0a0; margin-bottom: 2rem;">
+                    Interested in collaboration or have a project in mind? I'm always open to discussing new opportunities and innovative AI solutions.
+                </p>
+                <div class="contact-links">
+                    <a href="mailto:nahidhasan.gst.cse@gmail.com" class="contact-link">📧</a>
+                    <a href="https://github.com/myself-nahid" target="_blank" class="contact-link">💻</a>
+                    <a href="https://www.linkedin.com/in/nahid-hasan-4b2a27363/" target="_blank" class="contact-link">💼</a>
+                    <a href="https://www.kaggle.com/nhmishuk" target="_blank" class="contact-link">📊</a>
+                </div>
             </div>
         </div>
     </section>
